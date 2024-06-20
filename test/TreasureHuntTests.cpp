@@ -17,7 +17,7 @@ protected:
 };
 
 TEST_F(CalcNumberOfWallsTest, CorrectNumberOfWallsFromCenter) {
-  EXPECT_EQ(1, calc_number_of_walls(walls, Point(54.5, 55.4)));
+  EXPECT_EQ(2, calc_number_of_walls(walls, Point(54.5, 55.4)));
 }
 
 // cannot get to the treasure -> std::numeric_limits<std::size_t>::max()
@@ -27,12 +27,12 @@ TEST_F(CalcNumberOfWallsTest, InCorrectNumberOfWallsFromTriangleTopCorner) {
 }
 
 TEST_F(CalcNumberOfWallsTest, CorrectNumberOfWallsFromAlmostOutside) {
-  EXPECT_EQ(0, calc_number_of_walls(walls, Point(1, 1)));
+  EXPECT_EQ(1, calc_number_of_walls(walls, Point(1, 1)));
 }
 
 TEST_F(CalcNumberOfWallsTest,
        CorrectNumberOfWallsFromTheSmallestBottomTriangle) {
-  EXPECT_EQ(1, calc_number_of_walls(walls, Point(50, 27)));
+  EXPECT_EQ(2, calc_number_of_walls(walls, Point(50, 27)));
 }
 
 // TODO add more diffcult test cases probably

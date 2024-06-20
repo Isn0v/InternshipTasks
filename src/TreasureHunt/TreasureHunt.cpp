@@ -230,6 +230,7 @@ void recursive_wall_traverse(std::vector<Wall> &walls, Point &treasure_point,
   auto polygon_walls = ray_casting(walls, treasure_point);
   for (const auto &wall : external_walls) {
     if (polygon_walls.find(wall) != polygon_walls.end()) {
+      number_of_walls++;
       minimal_number_of_walls = minimal_number_of_walls < number_of_walls
                                     ? minimal_number_of_walls
                                     : number_of_walls;
