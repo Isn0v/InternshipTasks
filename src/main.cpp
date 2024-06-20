@@ -1,39 +1,26 @@
+// #include <DigitalLab/DigitalLab.hpp>
+#include "TreasureHunt/TreasureHunt.hpp"
+#include <TreasureHunt/TreasureHunt.hpp>
+
+#include <algorithm>
 #include <cstddef>
 #include <iostream>
-#include <DigitalLab/DigitalLab.hpp>
+#include <vector>
 
 int main() {
-  // size_t pattern_shape[]{2, 2};
-  // char pattern[]{'1', '0', '1', '1'};
+  std::vector<Wall> walls = {
+      Wall(0, 0, 100, 0),     Wall(0, 0, 0, 100),    Wall(0, 100, 100, 100),
+      Wall(100, 0, 100, 100), Wall(20, 0, 37, 100),  Wall(40, 0, 76, 100),
+      Wall(85, 0, 0, 75),     Wall(100, 90, 0, 90),  Wall(0, 71, 100, 61),
+      Wall(0, 14, 100, 38),   Wall(100, 47, 47, 100)};
 
-  size_t pattern_shape[]{1, 1};
-  char pattern[]{'0'};
-
-  size_t b_shape[]{5, 5};
-  char b[]{'1', '1', '0', '0', '0', '0', '1', '1', '0', '0', '1', '0', '0',
-           '1', '0', '1', '1', '1', '1', '0', '0', '0', '1', '1', '1'};
-
-  int expected[]{'1', '2', '*', '0', '0', '0', '2', '2', '0',
-                 '0', '2', '*', '0', '1', '0', '2', '2', '1',
-                 '2', '*', '0', '0', '1', '2', '2'};
-
-  char result[5 * 5];
-
-  matrix_pattern_matching(pattern, pattern_shape, b, b_shape, result);
-  for (size_t x = 0; x < b_shape[1]; x++) {
-    for (size_t y = 0; y < b_shape[0]; y++) {
-      std::cout << b[x * b_shape[0] + y] << " ";
-    }
-    std::cout << std::endl;
-  }
-  std::cout << std::endl;
-
-  for (size_t x = 0; x < b_shape[1]; x++) {
-    for (size_t y = 0; y < b_shape[0]; y++) {
-      std::cout << result[x * b_shape[0] + y] << " ";
-    }
-    std::cout << std::endl;
-  }
+  // auto polygons = ray_casting(walls, Point(80, 45));
+  // for (const auto &polygon : polygons) {
+  //   std::cout << polygon << std::endl;
+  // }
+  // std::cout << std::endl;
+  // std::cout << calc_number_of_walls(walls, Point(54.5, 55.4)) << std::endl;
+  std::cout << calc_number_of_walls(walls, Point(70, 87)) << std::endl;
 
   return 0;
 }
