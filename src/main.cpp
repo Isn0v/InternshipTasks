@@ -1,5 +1,4 @@
 // #include <DigitalLab/DigitalLab.hpp>
-#include "TreasureHunt/TreasureHunt.hpp"
 #include <TreasureHunt/TreasureHunt.hpp>
 
 #include <algorithm>
@@ -14,13 +13,13 @@ int main() {
       Wall(85, 0, 0, 75),     Wall(100, 90, 0, 90),  Wall(0, 71, 100, 61),
       Wall(0, 14, 100, 38),   Wall(100, 47, 47, 100)};
 
-  // auto polygons = ray_casting(walls, Point(80, 45));
+  // auto polygons = ray_casting(walls, Point(50, 27));
   // for (const auto &polygon : polygons) {
   //   std::cout << polygon << std::endl;
   // }
   // std::cout << std::endl;
   // std::cout << calc_number_of_walls(walls, Point(54.5, 55.4)) << std::endl;
-  std::cout << calc_number_of_walls(walls, Point(70, 87)) << std::endl;
+  std::cout << calc_number_of_walls(walls, Point(50, 27)) << std::endl;
 
   return 0;
 }

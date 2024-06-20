@@ -1,9 +1,8 @@
 set(BINARY ${CMAKE_PROJECT_NAME}_test)
 
-
-
-set(TEST_SOURCES DigitalLabTests.cpp)
-set(SOLUTION_LIBRARIES DigitalLab)
+# set(TEST_SOURCES DigitalLabTests.cpp TreasureHuntTests.cpp)
+set(TEST_SOURCES TreasureHuntTests.cpp)
+set(SOLUTION_LIBRARIES DigitalLab TreasureHunt)
 
 include(FetchContent)
 FetchContent_Declare(
