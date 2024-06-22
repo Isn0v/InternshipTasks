@@ -2,6 +2,7 @@
 #include <cstddef>
 #include <unordered_map>
 #include <iostream>
+#include <sstream>
 
 #define FIELD_WIDTH 15
 #define FIELD_HEIGHT 10
@@ -44,18 +45,27 @@ public:
 class RGB_Game {
 private:
   char game_field[FIELD_HEIGHT][FIELD_WIDTH];
+  std::size_t total_score = 0;
   std::unordered_map<Point, std::size_t, PointHash> elem_to_cluster_size;
+  std::stringstream game_log;
   DSU field_dsu;
 
   bool out_of_field(const Point& point);
+  bool can_move();
+
   void clusterize_field();
   void union_chars(bool *visited, char elem1, const Point& point1,
                    char elem2, const Point& point2);
   void update_field();
+  Point choose_move();
+  void update();
+  void make_move(std::size_t move_count, const Point& point);
+
+  std::size_t count_balls_on_field();
 
 public:
   RGB_Game(char **field);
   auto get_field();
-  void make_move(const Point& point);
-  void update();
+
+  void play();
 };

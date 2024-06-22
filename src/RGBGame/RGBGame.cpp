@@ -69,6 +69,11 @@ bool RGB_Game::out_of_field(const Point &point) {
           point.x() < 0 || point.y() < 0);
 }
 
+bool RGB_Game::can_move() {
+  // TODO implement
+  throw std::runtime_error("Not implemented");
+}
+
 void RGB_Game::clusterize_field() {
   bool visited[FIELD_HEIGHT][FIELD_WIDTH];
   std::fill_n(&visited[0][0], FIELD_HEIGHT * FIELD_WIDTH, false);
@@ -154,7 +159,7 @@ void RGB_Game::update_field() {
   }
   threads.clear();
   // shift of raws ended
-  //TODO divide into two parts
+  // TODO divide into two parts
   // shift of columns started
   auto column_is_empty = [&](std::size_t i) {
     for (std::size_t j = 0; j < FIELD_HEIGHT; ++j) {
@@ -191,6 +196,23 @@ void RGB_Game::update_field() {
   } while (first_empty_column_index != first_non_empty_column_index + 1);
 }
 
+Point RGB_Game::choose_move() {
+  std::size_t max_cluster_size = 0;
+  Point best_move = Point(-1, -1);
+  for (std::size_t i = FIELD_HEIGHT; i >= 0; --i) {
+    for (std::size_t j = 0; j < FIELD_WIDTH; ++j) {
+      if (game_field[i][j] != ' ') {
+        std::size_t cluster_size = elem_to_cluster_size[Point(j, i)];
+        if (cluster_size > max_cluster_size) {
+          max_cluster_size = cluster_size;
+          best_move = Point(j, i);
+        }
+      }
+    }
+  }
+  return best_move;
+}
+
 RGB_Game::RGB_Game(char **field) {
   field_dsu = DSU();
   for (std::size_t i = 0; i < FIELD_HEIGHT; i++) {
@@ -204,21 +226,42 @@ RGB_Game::RGB_Game(char **field) {
 
 auto RGB_Game::get_field() { return game_field; }
 
-void RGB_Game::make_move(const Point &point) {
+void RGB_Game::play() {
+  std::size_t move_count = 0;
+  while (can_move()) {
+    Point move = choose_move();
+    make_move(move_count++, move);
+  }
+  game_log << "Final score " << total_score << "with " << count_balls_on_field() << " balls remaining\n";
+}
+
+void RGB_Game::make_move(std::size_t move_count, const Point &point) {
+  std::size_t n_erased = 0;
+  char color = game_field[point.y()][point.x()];
   for (std::size_t i = 0; i < FIELD_HEIGHT; i++) {
     for (std::size_t j = 0; j < FIELD_WIDTH; j++) {
       if (field_dsu.get_root(i * FIELD_WIDTH + j) ==
           field_dsu.get_root(point.y() * FIELD_WIDTH + point.x())) {
         game_field[i][j] = ' ';
         elem_to_cluster_size.erase(Point(j, i));
+        n_erased++;
       }
     }
   }
-  //TODO collect logs for each move (for output)
+  std::size_t acquired_points = (n_erased - 2) * (n_erased - 2);
+  total_score += acquired_points;
+  game_log << "Move " << move_count << " at (" << point.x() << ", " << point.y()
+           << ")" << ": removed" << n_erased << " balls of color " << color
+           << ", got " << acquired_points << " points\n";
   update();
 }
 
 void RGB_Game::update() {
   update_field();
   clusterize_field();
+}
+
+std::size_t RGB_Game::count_balls_on_field() { 
+  // TODO implement
+  throw std::runtime_error("Not implemented");
 }
