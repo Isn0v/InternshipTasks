@@ -74,7 +74,7 @@ int main() {
       {'R', 'B', 'G', 'R', 'B', 'G', 'R', 'B', 'G', 'R', 'B', 'G', 'R', 'B',
        'G'}};
 
-  RGB_Game game(field3);
+  RGB_Game game(field1);
   game.play();
   std::cout << game.dumps_log();
 

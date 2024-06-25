@@ -169,21 +169,8 @@ ray_casting(const std::vector<Wall> &initial_walls,
 
   auto point_beyond_ray = [](const Point &point, const Ray &ray) {
     double x1, y1, x2, y2;
-    if (ray.x2() > ray.x1()) {
-      x1 = ray.x1();
-      x2 = ray.x2();
-    } else {
-      x1 = ray.x2();
-      x2 = ray.x1();
-    }
-
-    if (ray.y2() > ray.y1()) {
-      y1 = ray.y1();
-      y2 = ray.y2();
-    } else {
-      y1 = ray.y2();
-      y2 = ray.y1();
-    }
+    std::tie(x1, x2) = (ray.x1() > ray.x2()) ? std::make_tuple(ray.x2(), ray.x1()) : std::make_tuple(ray.x1(), ray.x2());
+    std::tie(y1, y2) = (ray.y1() > ray.y2()) ? std::make_tuple(ray.y2(), ray.y1()) : std::make_tuple(ray.y1(), ray.y2());
 
     return point.x() < x1 || point.x() > x2 || point.y() < y1 || point.y() > y2;
   };
