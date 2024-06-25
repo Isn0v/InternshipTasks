@@ -1,8 +1,8 @@
 set(BINARY ${CMAKE_PROJECT_NAME}_test)
 
-set(TEST_SOURCES DigitalLabTests.cpp TreasureHuntTests.cpp RGBGameTests.cpp)
+set(TEST_SOURCES DigitalLabTests.cpp TreasureHuntTests.cpp RGBGameTests.cpp RailroadsTests.cpp)
 
-set(SOLUTION_LIBRARIES DigitalLab TreasureHunt RGBGame)
+set(SOLUTION_LIBRARIES DigitalLab TreasureHunt RGBGame Railroads)
 
 include(FetchContent)
 FetchContent_Declare(

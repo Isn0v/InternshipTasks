@@ -23,7 +23,7 @@ TEST_F(CalcNumberOfWallsTest, CorrectNumberOfWallsFromCenter) {
 }
 
 // cannot get to the treasure -> std::numeric_limits<std::size_t>::max()
-TEST_F(CalcNumberOfWallsTest, InCorrectNumberOfWallsFromTriangleTopCorner) {
+TEST_F(CalcNumberOfWallsTest, IncorrectNumberOfWallsFromTriangleTopCorner) {
   EXPECT_EQ(std::numeric_limits<std::size_t>::max(),
             Treasure_Hunt::calc_number_of_walls(walls, Treasure_Hunt::Point(70, 87)));
 }
