@@ -62,7 +62,7 @@ TEST(DigitalLab, PatternShape2x2Test) {
 
   char result[5 * 5];
 
-  matrix_pattern_matching(pattern, pattern_shape, b, b_shape, result);
+  Digital_Lab::matrix_pattern_matching(pattern, pattern_shape, b, b_shape, result);
 
   EXPECT_TRUE(equals(result, b_shape, expected, b_shape));
 }
@@ -94,7 +94,7 @@ TEST(DigitalLab, PatternShape1x1With0Test) {
                   '2', '0', '0', '0', '2', '2', '2'};
 
   char result[5 * 5];
-  matrix_pattern_matching(pattern, pattern_shape, b, b_shape, result);
+  Digital_Lab::matrix_pattern_matching(pattern, pattern_shape, b, b_shape, result);
 
   EXPECT_TRUE(equals(result, b_shape, expected, b_shape));
 }
@@ -126,7 +126,7 @@ TEST(DigitalLab, PatternShape1x1With1Test) {
                   '1', '*', '*', '*', '1', '1', '1'};
 
   char result[5 * 5];
-  matrix_pattern_matching(pattern, pattern_shape, b, b_shape, result);
+  Digital_Lab::matrix_pattern_matching(pattern, pattern_shape, b, b_shape, result);
 
   EXPECT_TRUE(equals(result, b_shape, expected, b_shape));
 }
@@ -158,7 +158,7 @@ TEST(DigitalLab, PatternShape2x2WithAll1Test) {
                   '2', '1', '0', '0', '1', '1', '1'};
 
   char result[5 * 5];
-  matrix_pattern_matching(pattern, pattern_shape, b, b_shape, result);
+  Digital_Lab::matrix_pattern_matching(pattern, pattern_shape, b, b_shape, result);
   EXPECT_TRUE(equals(result, b_shape, expected, b_shape));
 }
 
@@ -187,7 +187,7 @@ TEST(DigitalLab, IncorrectPatternShape2x6Test) {
 
   char *expected = b;
   char result[5 * 5];
-  matrix_pattern_matching(pattern, pattern_shape, b, b_shape, result);
+  Digital_Lab::matrix_pattern_matching(pattern, pattern_shape, b, b_shape, result);
   EXPECT_TRUE(equals(result, b_shape, expected, b_shape));
 }
 
@@ -219,7 +219,7 @@ TEST(DigitalLab, PatternShape2x4Test) {
                   '*', '0', '1', '1', '1', '0', '1'};
 
   char result[5 * 5];
-  matrix_pattern_matching(pattern, pattern_shape, b, b_shape, result);
+  Digital_Lab::matrix_pattern_matching(pattern, pattern_shape, b, b_shape, result);
   EXPECT_TRUE(equals(result, b_shape, expected, b_shape));
 }
 
@@ -249,6 +249,6 @@ TEST(DigitalLab, PatternShape2x3WithUnspecifiedValuesTest) {
                   '*', '2', '0', '0', '2', '2', '3'};
   char result[5 * 5];
   EXPECT_THROW(
-      matrix_pattern_matching(pattern, pattern_shape, b, b_shape, result),
+      Digital_Lab::matrix_pattern_matching(pattern, pattern_shape, b, b_shape, result),
       std::invalid_argument);
 }

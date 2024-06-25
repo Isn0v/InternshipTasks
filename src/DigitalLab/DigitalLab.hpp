@@ -1,6 +1,8 @@
 #pragma once
 #include <cstddef>
 
+namespace Digital_Lab {
+
 /**
  * @brief Applies the pattern to the matrix b and stores the result in the
  * result matrix.
@@ -13,3 +15,5 @@
  */
 void matrix_pattern_matching(char *pattern, size_t *pattern_shape, char *b,
                              size_t *b_shape, char *result);
+
+}  // namespace Digital_Lab

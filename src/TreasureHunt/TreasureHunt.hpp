@@ -5,11 +5,13 @@
 #include <unordered_set>
 #include <vector>
 
+namespace Treasure_Hunt {
+
 class Point {
-private:
+ private:
   double x_, y_;
 
-public:
+ public:
   double x() const;
   double y() const;
 
@@ -33,11 +35,10 @@ struct PointHash {
 };
 
 class Wall {
-
-private:
+ private:
   double x1_, y1_, x2_, y2_;
 
-public:
+ public:
   Wall() = default;
   Wall(double x1, double y1, double x2, double y2);
   Wall(const Wall &wall);
@@ -56,9 +57,7 @@ public:
 
   double get_distance_with_point(const Point &point) const;
 
-
   bool operator==(const Wall &wall) const;
-
 
   friend std::ostream &operator<<(std::ostream &os, const Wall &wall);
 };
@@ -67,8 +66,10 @@ struct WallHash {
   std::size_t operator()(const Wall &wall) const;
 };
 
-std::unordered_set<Wall, WallHash>
-ray_casting(const std::vector<Wall> &initial_walls, const Point &casting_point);
+std::unordered_set<Wall, WallHash> ray_casting(
+    const std::vector<Wall> &initial_walls, const Point &casting_point);
 
 std::size_t calc_number_of_walls(const std::vector<Wall> &initial_walls,
                                  const Point &initial_treasure_point);
+
+}  // namespace Treasure_Hunt

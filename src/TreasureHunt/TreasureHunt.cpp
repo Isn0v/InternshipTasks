@@ -1,4 +1,5 @@
 #include "TreasureHunt.hpp"
+
 #include <limits>
 
 #define PHI_STEP 5
@@ -13,6 +14,8 @@
 #include <unordered_map>
 #include <unordered_set>
 #include <vector>
+
+namespace Treasure_Hunt {
 
 Point::Point(double x, double y) : x_(x), y_(y) {}
 
@@ -143,9 +146,8 @@ std::size_t WallHash::operator()(const Wall &wall) const {
          std::hash<double>()(wall.x2()) ^ std::hash<double>()(wall.y2());
 }
 
-std::unordered_set<Wall, WallHash>
-ray_casting(const std::vector<Wall> &initial_walls,
-            const Point &casting_point) {
+std::unordered_set<Wall, WallHash> ray_casting(
+    const std::vector<Wall> &initial_walls, const Point &casting_point) {
   using Ray = Wall;
 
   auto ray_generator = [&, phi = 0]() mutable {
@@ -169,8 +171,12 @@ ray_casting(const std::vector<Wall> &initial_walls,
 
   auto point_beyond_ray = [](const Point &point, const Ray &ray) {
     double x1, y1, x2, y2;
-    std::tie(x1, x2) = (ray.x1() > ray.x2()) ? std::make_tuple(ray.x2(), ray.x1()) : std::make_tuple(ray.x1(), ray.x2());
-    std::tie(y1, y2) = (ray.y1() > ray.y2()) ? std::make_tuple(ray.y2(), ray.y1()) : std::make_tuple(ray.y1(), ray.y2());
+    std::tie(x1, x2) = (ray.x1() > ray.x2())
+                           ? std::make_tuple(ray.x2(), ray.x1())
+                           : std::make_tuple(ray.x1(), ray.x2());
+    std::tie(y1, y2) = (ray.y1() > ray.y2())
+                           ? std::make_tuple(ray.y2(), ray.y1())
+                           : std::make_tuple(ray.y1(), ray.y2());
 
     return point.x() < x1 || point.x() > x2 || point.y() < y1 || point.y() > y2;
   };
@@ -203,7 +209,6 @@ ray_casting(const std::vector<Wall> &initial_walls,
 void recursive_wall_traverse(std::vector<Wall> &walls, Point &treasure_point,
                              std::size_t &minimal_number_of_walls,
                              std::size_t number_of_walls = 0) {
-
   const std::vector<Wall> external_walls = {
       Wall(FIELD_START_BOUNDARY, FIELD_START_BOUNDARY, FIELD_END_BOUNDARY,
            FIELD_START_BOUNDARY),
@@ -272,3 +277,5 @@ std::size_t calc_number_of_walls(const std::vector<Wall> &initial_walls,
 
   return minimal_number_of_walls;
 }
+
+}  // namespace Treasure_Hunt

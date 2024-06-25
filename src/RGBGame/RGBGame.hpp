@@ -7,11 +7,13 @@
 #define FIELD_WIDTH 15
 #define FIELD_HEIGHT 10
 
+namespace RGB_Game {
+
 class Point {
-private:
+ private:
   std::size_t x_, y_;
 
-public:
+ public:
   std::size_t x() const;
   std::size_t y() const;
 
@@ -31,28 +33,28 @@ struct PointHash {
 };
 
 class DSU {
-private:
+ private:
   std::size_t parent[FIELD_HEIGHT * FIELD_WIDTH];
   std::size_t rank[FIELD_HEIGHT * FIELD_WIDTH];
   std::unordered_map<std::size_t, std::size_t> root_to_cluster_size;
 
   void init();
 
-public:
+ public:
   DSU();
   void reset();
   void make_union(std::size_t i1, std::size_t i2);
 
   std::size_t get_root(std::size_t i);
   std::size_t get_cluster_size(std::size_t i);
-  
+
   auto get_cluster_sizes() const;
 
   friend class RGB_Game;
 };
 
 class RGB_Game {
-private:
+ private:
   DSU field_dsu;
   char game_field[FIELD_HEIGHT][FIELD_WIDTH];
   std::size_t total_score = 0;
@@ -63,16 +65,15 @@ private:
   Point choose_move();
 
   void clusterize_field();
-  void union_chars(char elem1, const Point &point1, char elem2,
-                   const Point &point2);
   void update_field();
   void update();
   void make_move(std::size_t move_count, const Point &point);
 
-public:
+ public:
   RGB_Game(char (&field)[FIELD_HEIGHT][FIELD_WIDTH]);
   auto get_field();
 
   void play();
   std::string dumps_log();
 };
+}  // namespace RGB_Game

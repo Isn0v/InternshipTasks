@@ -1,6 +1,9 @@
 #include "DigitalLab.hpp"
+
 #include <stdexcept>
 #include <unordered_map>
+
+namespace Digital_Lab {
 
 // Mapping of pattern values to corresponding values in the matrix
 static std::unordered_map<char, char> pattern_map = {{'0', '*'}, {'1', '2'}};
@@ -39,7 +42,6 @@ T &get_value(T *array, size_t *shape, size_t x, size_t y) {
  */
 bool is_match(char *pattern, size_t *pattern_shape, char *b, size_t *b_shape,
               size_t initial_x, size_t initial_y) {
-
   if (initial_x + pattern_shape[1] > b_shape[1] ||
       initial_y + pattern_shape[0] > b_shape[0]) {
     return false;
@@ -86,11 +88,11 @@ void transform_by_pattern(char *pattern, size_t *pattern_shape, char *b,
       if (!value_to_set) {
         throw std::invalid_argument("Unspecified value in pattern");
       }
-      get_value(b, b_shape, initial_x + local_x, initial_y + local_y) = value_to_set;
+      get_value(b, b_shape, initial_x + local_x, initial_y + local_y) =
+          value_to_set;
     }
   }
 }
-
 
 void matrix_pattern_matching(char *pattern, size_t *pattern_shape, char *b,
                              size_t *b_shape, char *result) {
@@ -115,3 +117,4 @@ void matrix_pattern_matching(char *pattern, size_t *pattern_shape, char *b,
   delete[] mask;
 }
 
+}  // namespace Digital_Lab
