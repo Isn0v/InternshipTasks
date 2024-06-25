@@ -1,5 +1,6 @@
 // #include <DigitalLab/DigitalLab.hpp>
-#include <TreasureHunt/TreasureHunt.hpp>
+// #include <TreasureHunt/TreasureHunt.hpp>
+#include <RGBGame/RGBGame.hpp>
 
 #include <algorithm>
 #include <cstddef>
@@ -7,19 +8,75 @@
 #include <vector>
 
 int main() {
-  std::vector<Wall> walls = {
-      Wall(0, 0, 100, 0),     Wall(0, 0, 0, 100),    Wall(0, 100, 100, 100),
-      Wall(100, 0, 100, 100), Wall(20, 0, 37, 100),  Wall(40, 0, 76, 100),
-      Wall(85, 0, 0, 75),     Wall(100, 90, 0, 90),  Wall(0, 71, 100, 61),
-      Wall(0, 14, 100, 38),   Wall(100, 47, 47, 100)};
+  char field1[FIELD_HEIGHT][FIELD_WIDTH] = {
+      {'R', 'G', 'G', 'B', 'B', 'G', 'G', 'R', 'B', 'R', 'R', 'G', 'G', 'B',
+       'G'},
+      {'R', 'B', 'G', 'R', 'B', 'G', 'R', 'B', 'G', 'R', 'B', 'G', 'R', 'B',
+       'G'},
+      {'R', 'R', 'R', 'R', 'G', 'B', 'B', 'B', 'R', 'G', 'G', 'R', 'B', 'B',
+       'B'},
+      {'G', 'G', 'R', 'G', 'B', 'G', 'G', 'B', 'R', 'R', 'G', 'G', 'G', 'B',
+       'G'},
+      {'G', 'B', 'G', 'G', 'R', 'R', 'R', 'R', 'R', 'B', 'G', 'G', 'R', 'R',
+       'R'},
+      {'B', 'B', 'B', 'B', 'B', 'B', 'B', 'B', 'B', 'B', 'B', 'B', 'B', 'B',
+       'B'},
+      {'B', 'B', 'B', 'B', 'B', 'B', 'B', 'B', 'B', 'B', 'B', 'B', 'B', 'B',
+       'B'},
+      {'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R',
+       'R'},
+      {'R', 'R', 'R', 'R', 'R', 'G', 'G', 'G', 'G', 'R', 'R', 'R', 'R', 'R',
+       'R'},
+      {'G', 'G', 'G', 'G', 'G', 'G', 'G', 'G', 'G', 'G', 'G', 'G', 'G', 'G',
+       'G'}};
 
-  // auto polygons = ray_casting(walls, Point(50, 27));
-  // for (const auto &polygon : polygons) {
-  //   std::cout << polygon << std::endl;
-  // }
-  // std::cout << std::endl;
-  // std::cout << calc_number_of_walls(walls, Point(54.5, 55.4)) << std::endl;
-  std::cout << calc_number_of_walls(walls, Point(50, 27)) << std::endl;
+  char field2[FIELD_HEIGHT][FIELD_WIDTH] = {
+      {'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R',
+       'R'},
+      {'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R',
+       'R'},
+      {'G', 'G', 'G', 'G', 'G', 'G', 'G', 'G', 'G', 'G', 'G', 'G', 'G', 'G',
+       'G'},
+      {'G', 'G', 'G', 'G', 'G', 'G', 'G', 'G', 'G', 'G', 'G', 'G', 'G', 'G',
+       'G'},
+      {'B', 'B', 'B', 'B', 'B', 'B', 'B', 'B', 'B', 'B', 'B', 'B', 'B', 'B',
+       'B'},
+      {'B', 'B', 'B', 'B', 'B', 'B', 'B', 'B', 'B', 'B', 'B', 'B', 'B', 'B',
+       'B'},
+      {'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R',
+       'R'},
+      {'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R',
+       'R'},
+      {'G', 'G', 'G', 'G', 'G', 'G', 'G', 'G', 'G', 'G', 'G', 'G', 'G', 'G',
+       'G'},
+      {'G', 'G', 'G', 'G', 'G', 'G', 'G', 'G', 'G', 'G', 'G', 'G', 'G', 'G',
+       'G'}};
+
+  char field3[FIELD_HEIGHT][FIELD_WIDTH] = {
+      {'R', 'B', 'G', 'R', 'B', 'G', 'R', 'B', 'G', 'R', 'B', 'G', 'R', 'B',
+       'G'},
+      {'B', 'G', 'R', 'B', 'G', 'R', 'B', 'G', 'R', 'B', 'G', 'R', 'B', 'G',
+       'R'},
+      {'G', 'R', 'B', 'G', 'R', 'B', 'G', 'R', 'B', 'G', 'R', 'B', 'G', 'R',
+       'B'},
+      {'R', 'B', 'G', 'R', 'B', 'G', 'R', 'B', 'G', 'R', 'B', 'G', 'R', 'B',
+       'G'},
+      {'B', 'G', 'R', 'B', 'G', 'R', 'B', 'G', 'R', 'B', 'G', 'R', 'B', 'G',
+       'R'},
+      {'G', 'R', 'B', 'G', 'R', 'B', 'G', 'R', 'B', 'G', 'R', 'B', 'G', 'R',
+       'B'},
+      {'R', 'B', 'G', 'R', 'B', 'G', 'R', 'B', 'G', 'R', 'B', 'G', 'R', 'B',
+       'G'},
+      {'B', 'G', 'R', 'B', 'G', 'R', 'B', 'G', 'R', 'B', 'G', 'R', 'B', 'G',
+       'R'},
+      {'G', 'R', 'B', 'G', 'R', 'B', 'G', 'R', 'B', 'G', 'R', 'B', 'G', 'R',
+       'B'},
+      {'R', 'B', 'G', 'R', 'B', 'G', 'R', 'B', 'G', 'R', 'B', 'G', 'R', 'B',
+       'G'}};
+
+  RGB_Game game(field3);
+  game.play();
+  std::cout << game.dumps_log();
 
   return 0;
 }
