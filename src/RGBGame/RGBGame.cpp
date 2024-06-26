@@ -1,7 +1,7 @@
 #include "RGBGame.hpp"
 
 #include <algorithm>
-#include <thread>
+#include <sstream>
 #include <unordered_set>
 #include <vector>
 
@@ -25,6 +25,29 @@ Point &Point::operator=(const Point &point) {
 std::ostream &operator<<(std::ostream &os, const Point &wall) {
   os << "(" << wall.x_ << "," << wall.y_ << ")";
   return os;
+}
+
+std::string handle_rgb_game(const std::string &input) {
+  std::istringstream ss(input);
+  std::stringstream result;
+
+  std::size_t n, counter = 1;
+  ss >> n;
+  for (std::size_t i = 0; i < n; i++) {
+    result << "Game " << counter++ << ":" << std::endl;
+    char field[FIELD_HEIGHT][FIELD_WIDTH];
+    for (std::size_t j = 0; j < FIELD_HEIGHT; j++) {
+      for (std::size_t k = 0; k < FIELD_WIDTH; k++) {
+        ss >> field[j][k];
+      }
+    }
+
+    RGB_Game game(field);
+    game.play();
+    result << game.dumps_log() << std::endl;
+  }
+
+  return result.str();
 }
 
 bool Point::operator==(const Point &point) const {
@@ -92,36 +115,32 @@ bool RGB_Game::out_of_field(const Point &point) {
 }
 
 void RGB_Game::clusterize_field() {
-  for (std::size_t i = 0; i < FIELD_HEIGHT; i++) {
-    for (std::size_t j = 0; j < FIELD_WIDTH; j++) {
-      if (!game_field[i][j]) {
-        continue;
-      }
-      char left_elem = out_of_field(Point(j - 1, i)) ? 0 : game_field[i][j - 1];
-      char right_elem =
-          out_of_field(Point(j + 1, i)) ? 0 : game_field[i][j + 1];
-      char top_elem = out_of_field(Point(j, i - 1)) ? 0 : game_field[i - 1][j];
-      char bottom_elem =
-          out_of_field(Point(j, i + 1)) ? 0 : game_field[i + 1][j];
+  for (std::size_t i = 0; i < FIELD_HEIGHT; ++i) {
+    for (std::size_t j = 0; j < FIELD_WIDTH; ++j) {
+      if (!game_field[i][j]) continue;
 
-      if (left_elem && left_elem == game_field[i][j]) {
-        field_dsu.make_union(i * FIELD_WIDTH + j - 1, i * FIELD_WIDTH + j);
-      }
-      if (right_elem && right_elem == game_field[i][j]) {
-        field_dsu.make_union(i * FIELD_WIDTH + j + 1, i * FIELD_WIDTH + j);
-      }
-      if (top_elem && top_elem == game_field[i][j]) {
-        field_dsu.make_union(i * FIELD_WIDTH + j, (i - 1) * FIELD_WIDTH + j);
-      }
-      if (bottom_elem && bottom_elem == game_field[i][j]) {
-        field_dsu.make_union(i * FIELD_WIDTH + j, (i + 1) * FIELD_WIDTH + j);
-      }
+      auto make_union = [&](std::size_t dx, std::size_t dy) {
+        char neighbour_elem = out_of_field(Point(j + dx, i + dy))
+                                  ? 0
+                                  : game_field[i + dy][j + dx];
+        if (neighbour_elem && neighbour_elem == game_field[i][j]) {
+          field_dsu.make_union(i * FIELD_WIDTH + j,
+                               (i + dy) * FIELD_WIDTH + j + dx);
+        }
+      };
+
+      make_union(0, -1);
+      make_union(1, 0);
+      make_union(0, 1);
+      make_union(-1, 0);
     }
   }
 }
 
-void shift_game_field_raw_elems(char (&game_field)[FIELD_HEIGHT][FIELD_WIDTH]) {
+void shift_raw_elems(char (&game_field)[FIELD_HEIGHT][FIELD_WIDTH]) {
   std::size_t counter = 0;
+  // amount of shifts can't be more than FIELD_HEIGHT because we have
+  // FIELD_HEIGHT amount of rows
   while (counter < FIELD_HEIGHT) {
     for (std::size_t i = 0; i < FIELD_WIDTH; ++i) {
       for (std::size_t j = FIELD_HEIGHT - 1; j > 0; --j) {
@@ -134,8 +153,7 @@ void shift_game_field_raw_elems(char (&game_field)[FIELD_HEIGHT][FIELD_WIDTH]) {
   }
 }
 
-void shift_game_field_column_elems(
-    char (&game_field)[FIELD_HEIGHT][FIELD_WIDTH]) {
+void shift_column_elems(char (&game_field)[FIELD_HEIGHT][FIELD_WIDTH]) {
   auto column_is_empty = [&](std::size_t i) {
     for (std::size_t j = 0; j < FIELD_HEIGHT; ++j) {
       if (game_field[j][i]) {
@@ -145,6 +163,8 @@ void shift_game_field_column_elems(
     return true;
   };
   std::size_t counter = 0;
+  // amount of shifts can't be more than FIELD_WIDTH because we have FIELD_WIDTH
+  // amount of columns
   while (counter < FIELD_WIDTH) {
     for (std::size_t i = 0; i < FIELD_WIDTH - 1; ++i) {
       if (column_is_empty(i)) {
@@ -158,13 +178,15 @@ void shift_game_field_column_elems(
 }
 
 void RGB_Game::update_field() {
-  shift_game_field_raw_elems(game_field);
-  shift_game_field_column_elems(game_field);
+  shift_raw_elems(game_field);
+  shift_column_elems(game_field);
 }
 
 Point RGB_Game::choose_move() {
+  // overflow because of std::size_t
   Point best_move = Point(-1, 0);
   std::size_t max_cluster_size = 2;
+  // this iteration is according to the rules of choosing move from the task
   for (std::size_t j = 0; j < FIELD_WIDTH; ++j) {
     for (std::size_t i = FIELD_HEIGHT - 1; i > 0; --i) {
       if (game_field[i][j]) {
@@ -229,8 +251,10 @@ void RGB_Game::make_move(std::size_t move_count, const Point &point) {
   std::size_t acquired_points = (n_erased - 2) * (n_erased - 2);
   total_score += acquired_points;
 
-  game_log << "Move " << move_count << " at (" << FIELD_HEIGHT - point.y() << ", "
-           << point.x() + 1 << ")" << ": removed " << n_erased
+  // [FIELD_HEIGHT - point.y()] and [point.x() + 1] because of the
+  // relation of the coordinate basises in the algorithm and in the task
+  game_log << "Move " << move_count << " at (" << FIELD_HEIGHT - point.y()
+           << ", " << point.x() + 1 << ")" << ": removed " << n_erased
            << " balls of color " << color << ", got " << acquired_points
            << " points\n";
 }

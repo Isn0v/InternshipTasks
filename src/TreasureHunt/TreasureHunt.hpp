@@ -66,10 +66,53 @@ struct WallHash {
   std::size_t operator()(const Wall &wall) const;
 };
 
+/**
+ * @brief      Casts rays from a given point in a field and returns the nearest
+ * walls that the rays intersect with.
+ *
+ * @param[in]  initial_walls   The initial walls in the field
+ * @param[in]  casting_point   The point from which to cast the rays
+ *
+ * @return     An unordered set of walls that the rays intersect with
+ */
 std::unordered_set<Wall, WallHash> ray_casting(
     const std::vector<Wall> &initial_walls, const Point &casting_point);
 
-std::size_t calc_number_of_walls(const std::vector<Wall> &initial_walls,
+/**
+ * @brief      Calculates the number of doors in a field.
+ *
+ * @param[in]  initial_walls   The initial walls in the field
+ * @param[in]  initial_treasure_point   The initial treasure point
+ *
+ * @return     The number of doors in the field
+ *
+ * The algorithm returns the number of walls we should go through to get to
+ * treasure_point as specified in task.
+ */
+std::size_t calc_number_of_doors(const std::vector<Wall> &initial_walls,
                                  const Point &initial_treasure_point);
+
+/**
+ * @brief Parses the input string and handles the Treasure Hunt based on the
+ * provided input.
+ *
+ * @param input The input string containing the field information and the
+ * treasure point.
+ *
+ * @return The solution string containing the number of doors to the treasure.
+ *
+ * The input string is expected to be in the following format:
+ * [NUMBER_OF_WALLS]
+ * [WALL1_X1 WALL1_Y1 WALL1_X2 WALL1_Y2]
+ * [WALL2_X1 WALL2_Y1 WALL2_X2 WALL2_Y2]
+ * ...
+ * [WALLn_X1 WALLn_Y1 WALLn_X2 WALLn_Y2]
+ * [TREASURE_X TREASURE_Y].
+ *
+ * The function initializes the field based on the input string and calculates
+ * the number of doors to the treasure using the `calc_number_of_doors`
+ * function. It then returns the solution string like Number of doors = [NUMBER_OF_DOORS].
+ */
+std::string handle_treasure_hunt(const std::string &input);
 
 }  // namespace Treasure_Hunt

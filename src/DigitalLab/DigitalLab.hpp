@@ -1,5 +1,7 @@
 #pragma once
+
 #include <cstddef>
+#include <string>
 
 namespace Digital_Lab {
 
@@ -15,5 +17,15 @@ namespace Digital_Lab {
  */
 void matrix_pattern_matching(char *pattern, size_t *pattern_shape, char *b,
                              size_t *b_shape, char *result);
+
+
+/**
+ * Function that handles matrix operations based on a given pattern.
+ *
+ * @param input The input string containing pattern and matrix data.
+ *
+ * @return A string representing the result of the matrix operations.
+ */
+std::string handle_matrix_by_pattern(std::string input);                          
 
 }  // namespace Digital_Lab

@@ -111,3 +111,68 @@ TEST(RGBGameTests, RGBGameWithNoClusters) {
 
   EXPECT_EQ(game.dumps_log(), result);
 }
+
+TEST(RGBGameTests, IntegrationTest) {
+  std::string inp =
+      "3\n"
+      "RGGBBGGRBRRGGBG\n"
+      "RBGRBGRBGRBGRBG\n"
+      "RRRRGBBBRGGRBBB\n"
+      "GGRGBGGBRRGGGBG\n"
+      "GBGGRRRRRBGGRRR\n"
+      "BBBBBBBBBBBBBBB\n"
+      "BBBBBBBBBBBBBBB\n"
+      "RRRRRRRRRRRRRRR\n"
+      "RRRRRRGGGGRRRRR\n"
+      "GGGGGGGGGGGGGGG\n"
+      "\n"
+      "RRRRRRRRRRRRRRR\n"
+      "RRRRRRRRRRRRRRR\n"
+      "GGGGGGGGGGGGGGG\n"
+      "GGGGGGGGGGGGGGG\n"
+      "BBBBBBBBBBBBBBB\n"
+      "BBBBBBBBBBBBBBB\n"
+      "RRRRRRRRRRRRRRR\n"
+      "RRRRRRRRRRRRRRR\n"
+      "GGGGGGGGGGGGGGG\n"
+      "GGGGGGGGGGGGGGG\n"
+      "\n"
+      "RBGRBGRBGRBGRBG\n"
+      "BGRBGRBGRBGRBGR\n"
+      "GRBGRBGRBGRBGRB\n"
+      "RBGRBGRBGRBGRBG\n"
+      "BGRBGRBGRBGRBGR\n"
+      "GRBGRBGRBGRBGRB\n"
+      "RBGRBGRBGRBGRBG\n"
+      "BGRBGRBGRBGRBGR\n"
+      "GRBGRBGRBGRBGRB\n"
+      "RBGRBGRBGRBGRBG\n"
+      "\n";
+
+  std::string expected =
+      "Game 1:\n"
+      "Move 1 at (4, 1): removed 32 balls of color B, got 900 points\n"
+      "Move 2 at (2, 1): removed 39 balls of color R, got 1369 points\n"
+      "Move 3 at (1, 1): removed 37 balls of color G, got 1225 points\n"
+      "Move 4 at (3, 4): removed 11 balls of color B, got 81 points\n"
+      "Move 5 at (1, 1): removed 8 balls of color R, got 36 points\n"
+      "Move 6 at (2, 1): removed 6 balls of color G, got 16 points\n"
+      "Move 7 at (1, 6): removed 6 balls of color B, got 16 points\n"
+      "Move 8 at (1, 2): removed 5 balls of color R, got 9 points\n"
+      "Move 9 at (1, 2): removed 5 balls of color G, got 9 points\n"
+      "Final score 3661 with 1 balls remaining\n"
+      "\n"
+      "Game 2:\n"
+      "Move 1 at (1, 1): removed 30 balls of color G, got 784 points\n"
+      "Move 2 at (1, 1): removed 30 balls of color R, got 784 points\n"
+      "Move 3 at (1, 1): removed 30 balls of color B, got 784 points\n"
+      "Move 4 at (1, 1): removed 30 balls of color G, got 784 points\n"
+      "Move 5 at (1, 1): removed 30 balls of color R, got 784 points\n"
+      "Final score 4920 with 0 balls remaining\n"
+      "\n"
+      "Game 3:\n"
+      "Final score 0 with 150 balls remaining\n"
+      "\n";
+
+  EXPECT_EQ(RGB_Game::handle_rgb_game(inp), expected);
+}

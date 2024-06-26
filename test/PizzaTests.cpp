@@ -2,6 +2,9 @@
 
 #include <Pizza/Pizza.hpp>
 
+// NOTE: Results differs from what is presented in the task description.
+//       Because of the implementation details of the algorithm, we have various
+//       ways of covering the city.
 TEST(PizzaTest, TestCase2x2) {
   std::size_t n = 2, m = 2;
   std::vector<Pizza::Point> pizza_coords = {
@@ -20,7 +23,7 @@ TEST(PizzaTest, TestCase2x2) {
   } else {
     FAIL() << "Failed to cover all city";
   }
-  EXPECT_TRUE(city.is_city_covered());
+  EXPECT_TRUE(city.is_city_covered_correctly());
 }
 
 TEST(PizzaTest, TestCase5x5) {
@@ -40,7 +43,7 @@ TEST(PizzaTest, TestCase5x5) {
   } else {
     FAIL() << "Failed to cover all city";
   }
-  EXPECT_TRUE(city.is_city_covered());
+  EXPECT_TRUE(city.is_city_covered_correctly());
 }
 
 TEST(PizzaTest, IntegrationTest) {

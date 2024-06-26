@@ -112,12 +112,6 @@ std::string handle_pizza_city(const std::string &input) {
   return result.str();
 }
 
-void dump_permutation(const num_permutation_t &permutation) {
-  std::cout << "(" << std::get<0>(permutation) << ", "
-            << std::get<1>(permutation) << ", " << std::get<2>(permutation)
-            << ", " << std::get<3>(permutation) << ")" << std::endl;
-}
-
 bool Pizza_City::add_pizzeria_coverage(const Point &pizzeria,
                                        const num_permutation_t &permutation) {
   bool result = true;
@@ -130,8 +124,6 @@ bool Pizza_City::add_pizzeria_coverage(const Point &pizzeria,
                                    : pizzeria.x() + dx * j < field_width_;
       bool inside_field_y = dy < 0 ? pizzeria.y() >= -dy * j
                                    : pizzeria.y() + dy * j < field_height_;
-      auto &val_dx_dy =
-          city_field_[pizzeria.y() + dy * j][pizzeria.x() + dx * j];
       if (inside_field_x && inside_field_y &&
           city_field_[pizzeria.y() + dy * j][pizzeria.x() + dx * j] == 0) {
         city_field_[pizzeria.y() + dy * j][pizzeria.x() + dx * j] = val;
@@ -145,6 +137,8 @@ bool Pizza_City::add_pizzeria_coverage(const Point &pizzeria,
   side_addition(1, 1, 0);
   side_addition(2, 0, 1);
   side_addition(3, -1, 0);
+
+  // previously we could fill the incorrect cells and we need to get rid of it
   if (!result) {
     remove_pizzeria_coverage(pizzeria, permutation);
   }
@@ -219,7 +213,7 @@ Pizza_City::Pizza_City(std::size_t field_height, std::size_t field_width,
 
 bool Pizza_City::cover_all_city() { return backtracking(1); }
 
-bool Pizza_City::is_city_covered() const { 
+bool Pizza_City::is_city_covered_correctly() const {
   for (std::size_t i = 0; i < field_height_; i++) {
     for (std::size_t j = 0; j < field_width_; j++) {
       if (city_field_[i][j] == 0) {

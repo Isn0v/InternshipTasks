@@ -1,10 +1,12 @@
 #include "TreasureHunt.hpp"
 
 #include <limits>
+#include <sstream>
 
 #define PHI_STEP 5
 #define RAY_COUNT 360 / PHI_STEP
 
+#define NUMBER_OF_OUTER_WALLS 4
 #define FIELD_START_BOUNDARY 0
 #define FIELD_END_BOUNDARY 100
 
@@ -116,9 +118,6 @@ bool Wall::is_parallel(const Wall &wall1, const Wall &wall2) {
   double cos_a2 = (dx2 * dOx + dy2 * dOy) / (dx2 * dx2 + dy2 * dy2);
 
   return cos_a1 == cos_a2;
-
-  // return std::abs(wall1.x2_ - wall1.x1_) * std::abs(wall2.y2_ - wall2.y1_) ==
-  //        std::abs(wall2.x2_ - wall2.x1_) * std::abs(wall1.y2_ - wall1.y1_);
 }
 
 double Wall::get_distance_with_point(const Point &point) const {
@@ -169,6 +168,7 @@ std::unordered_set<Wall, WallHash> ray_casting(
            p2.get_distance_with_point(casting_point);
   };
 
+  // the ray is also a wall which is limited by its end points
   auto point_beyond_ray = [](const Point &point, const Ray &ray) {
     double x1, y1, x2, y2;
     std::tie(x1, x2) = (ray.x1() > ray.x2())
@@ -188,15 +188,17 @@ std::unordered_set<Wall, WallHash> ray_casting(
           point_beyond_ray(intersection, ray)) {
         continue;
       }
-
+      // find all possible intersections of each wall with concrete ray
       intersections.push_back(intersection);
       potential_walls[intersections.back()] = wall;
     }
 
+    // find the closest intersection
     auto min_intersection = std::min_element(
         intersections.begin(), intersections.end(), compare_points_by_dist);
 
     if (min_intersection != intersections.end()) {
+      // add the wall which was the closest to the ray
       polygon_walls.insert(potential_walls[*min_intersection]);
     }
 
@@ -221,6 +223,7 @@ void recursive_wall_traverse(std::vector<Wall> &walls, Point &treasure_point,
 
   auto polygon_walls = ray_casting(walls, treasure_point);
   for (const auto &wall : external_walls) {
+    // if we get to the end of the field, we can't continue
     if (polygon_walls.find(wall) != polygon_walls.end()) {
       number_of_walls++;
       minimal_number_of_walls = minimal_number_of_walls < number_of_walls
@@ -231,8 +234,10 @@ void recursive_wall_traverse(std::vector<Wall> &walls, Point &treasure_point,
   }
 
   std::unordered_map<Wall, std::vector<Point>, WallHash>
-      wall_point_intersections;
+      wall_to_point_intersections;
 
+  // find all possible intersections of each other walls which compiles the
+  // polygon which limit the point we are interested in
   for (auto wall1 : polygon_walls) {
     for (auto wall2 : polygon_walls) {
       if (wall1 == wall2) {
@@ -242,11 +247,14 @@ void recursive_wall_traverse(std::vector<Wall> &walls, Point &treasure_point,
       if (intersection.out_of_field()) {
         continue;
       }
-      wall_point_intersections[wall1].push_back(intersection);
-      wall_point_intersections[wall2].push_back(intersection);
+      wall_to_point_intersections[wall1].push_back(intersection);
+      wall_to_point_intersections[wall2].push_back(intersection);
     }
   }
-  for (const auto &wall_intersections : wall_point_intersections) {
+
+  // find where we can go to next by checking if the center of the wall is
+  // inside the intersection limits
+  for (const auto &wall_intersections : wall_to_point_intersections) {
     auto wall = wall_intersections.first;
     auto intersections = wall_intersections.second;
     auto center = wall.get_center();
@@ -257,6 +265,8 @@ void recursive_wall_traverse(std::vector<Wall> &walls, Point &treasure_point,
       double dx = (center.x() - treasure_point.x());
       double dy = (center.y() - treasure_point.y());
       double dist = std::sqrt(dx * dx + dy * dy);
+      // the next point shouldn't lie on the wall so we normallize and then add
+      // epsilon
       dx /= (dist / (std::numeric_limits<double>::epsilon() * 2));
       dy /= (dist / (std::numeric_limits<double>::epsilon() * 2));
 
@@ -267,7 +277,7 @@ void recursive_wall_traverse(std::vector<Wall> &walls, Point &treasure_point,
   }
 }
 
-std::size_t calc_number_of_walls(const std::vector<Wall> &initial_walls,
+std::size_t calc_number_of_doors(const std::vector<Wall> &initial_walls,
                                  const Point &initial_treasure_point) {
   Point treasure_point = initial_treasure_point;
   std::size_t minimal_number_of_walls = std::numeric_limits<std::size_t>::max();
@@ -276,6 +286,41 @@ std::size_t calc_number_of_walls(const std::vector<Wall> &initial_walls,
                           treasure_point, minimal_number_of_walls, 0);
 
   return minimal_number_of_walls;
+}
+
+std::string handle_treasure_hunt(const std::string &input) {
+  std::istringstream ss(input);
+  std::stringstream result;
+
+  std::size_t number_of_walls;
+  ss >> number_of_walls;
+  std::vector<Wall> walls(number_of_walls + NUMBER_OF_OUTER_WALLS);
+  walls[0] = Wall(FIELD_START_BOUNDARY, FIELD_START_BOUNDARY,
+                  FIELD_END_BOUNDARY, FIELD_START_BOUNDARY);
+  walls[1] = Wall(FIELD_START_BOUNDARY, FIELD_START_BOUNDARY,
+                  FIELD_START_BOUNDARY, FIELD_END_BOUNDARY);
+  walls[2] = Wall(FIELD_START_BOUNDARY, FIELD_END_BOUNDARY, FIELD_END_BOUNDARY,
+                  FIELD_END_BOUNDARY);
+  walls[3] = Wall(FIELD_END_BOUNDARY, FIELD_START_BOUNDARY, FIELD_END_BOUNDARY,
+                  FIELD_END_BOUNDARY);
+  for (std::size_t i = NUMBER_OF_OUTER_WALLS;
+       i < number_of_walls + NUMBER_OF_OUTER_WALLS; i++) {
+    double x1, y1, x2, y2;
+    ss >> x1 >> y1 >> x2 >> y2;
+    walls[i] = Wall(x1, y1, x2, y2);
+  }
+  double treasure_x, treasure_y;
+  ss >> treasure_x >> treasure_y;
+
+  auto number_of_doors =
+      calc_number_of_doors(walls, Point(treasure_x, treasure_y));
+  if (number_of_doors == std::numeric_limits<std::size_t>::max()) {
+    result << "Impossible to get to the given treasure point" << std::endl;
+  } else {
+    result << "Number of doors = " << number_of_doors << std::endl;
+  }
+
+  return result.str();
 }
 
 }  // namespace Treasure_Hunt

@@ -1,6 +1,6 @@
-#include <DigitalLab/DigitalLab.hpp>
 #include <gtest/gtest.h>
 
+#include <DigitalLab/DigitalLab.hpp>
 #include <sstream>
 #include <string>
 
@@ -62,7 +62,8 @@ TEST(DigitalLab, PatternShape2x2Test) {
 
   char result[5 * 5];
 
-  Digital_Lab::matrix_pattern_matching(pattern, pattern_shape, b, b_shape, result);
+  Digital_Lab::matrix_pattern_matching(pattern, pattern_shape, b, b_shape,
+                                       result);
 
   EXPECT_TRUE(equals(result, b_shape, expected, b_shape));
 }
@@ -94,7 +95,8 @@ TEST(DigitalLab, PatternShape1x1With0Test) {
                   '2', '0', '0', '0', '2', '2', '2'};
 
   char result[5 * 5];
-  Digital_Lab::matrix_pattern_matching(pattern, pattern_shape, b, b_shape, result);
+  Digital_Lab::matrix_pattern_matching(pattern, pattern_shape, b, b_shape,
+                                       result);
 
   EXPECT_TRUE(equals(result, b_shape, expected, b_shape));
 }
@@ -126,7 +128,8 @@ TEST(DigitalLab, PatternShape1x1With1Test) {
                   '1', '*', '*', '*', '1', '1', '1'};
 
   char result[5 * 5];
-  Digital_Lab::matrix_pattern_matching(pattern, pattern_shape, b, b_shape, result);
+  Digital_Lab::matrix_pattern_matching(pattern, pattern_shape, b, b_shape,
+                                       result);
 
   EXPECT_TRUE(equals(result, b_shape, expected, b_shape));
 }
@@ -158,7 +161,8 @@ TEST(DigitalLab, PatternShape2x2WithAll1Test) {
                   '2', '1', '0', '0', '1', '1', '1'};
 
   char result[5 * 5];
-  Digital_Lab::matrix_pattern_matching(pattern, pattern_shape, b, b_shape, result);
+  Digital_Lab::matrix_pattern_matching(pattern, pattern_shape, b, b_shape,
+                                       result);
   EXPECT_TRUE(equals(result, b_shape, expected, b_shape));
 }
 
@@ -187,7 +191,8 @@ TEST(DigitalLab, IncorrectPatternShape2x6Test) {
 
   char *expected = b;
   char result[5 * 5];
-  Digital_Lab::matrix_pattern_matching(pattern, pattern_shape, b, b_shape, result);
+  Digital_Lab::matrix_pattern_matching(pattern, pattern_shape, b, b_shape,
+                                       result);
   EXPECT_TRUE(equals(result, b_shape, expected, b_shape));
 }
 
@@ -219,7 +224,8 @@ TEST(DigitalLab, PatternShape2x4Test) {
                   '*', '0', '1', '1', '1', '0', '1'};
 
   char result[5 * 5];
-  Digital_Lab::matrix_pattern_matching(pattern, pattern_shape, b, b_shape, result);
+  Digital_Lab::matrix_pattern_matching(pattern, pattern_shape, b, b_shape,
+                                       result);
   EXPECT_TRUE(equals(result, b_shape, expected, b_shape));
 }
 
@@ -244,11 +250,111 @@ TEST(DigitalLab, PatternShape2x3WithUnspecifiedValuesTest) {
   char b[]{'1', '0', '2', '0', '0', '1', '2', '3', '0', '0', '1', '2', '3',
            '1', '0', '1', '1', '1', '0', '2', '0', '0', '1', '2', '3'};
 
-  char expected[]{'2', '*', '2', '0', '0', '2', '2', '3', '0',
-                  '0', '1', '2', '3', '1', '0', '1', '1', '2',
-                  '*', '2', '0', '0', '2', '2', '3'};
   char result[5 * 5];
-  EXPECT_THROW(
-      Digital_Lab::matrix_pattern_matching(pattern, pattern_shape, b, b_shape, result),
-      std::invalid_argument);
+  EXPECT_THROW(Digital_Lab::matrix_pattern_matching(pattern, pattern_shape, b,
+                                                    b_shape, result),
+               std::invalid_argument);
+}
+
+TEST(DigitalLab, IntegrationTestFromTestCase1) {
+  std::string inp =
+      "2 2\n"
+      "1 0\n"
+      "1 1\n"
+      "5 5\n"
+      "1 1 0 0 0\n"
+      "0 1 1 0 0\n"
+      "1 0 0 1 0\n"
+      "1 1 1 1 0\n"
+      "0 0 1 1 1\n";
+
+  std::string expected =
+      "1 2 * 0 0 \n"
+      "0 2 2 0 0 \n"
+      "2 * 0 1 0 \n"
+      "2 2 1 2 * \n"
+      "0 0 1 2 2 \n";
+
+  EXPECT_EQ(Digital_Lab::handle_matrix_by_pattern(inp), expected);
+}
+
+TEST(DigitalLab, IntegrationTestFromTestCase2) {
+  std::string inp =
+      "1 1\n"
+      "1\n"
+      "5 5\n"
+      "1 1 0 0 0\n"
+      "0 1 1 0 0\n"
+      "1 0 0 1 0\n"
+      "1 1 1 1 0\n"
+      "0 0 1 1 1\n";
+
+  std::string expected =
+      "2 2 0 0 0 \n"
+      "0 2 2 0 0 \n"
+      "2 0 0 2 0 \n"
+      "2 2 2 2 0 \n"
+      "0 0 2 2 2 \n";
+
+  EXPECT_EQ(Digital_Lab::handle_matrix_by_pattern(inp), expected);
+}
+
+TEST(DigitalLab, IntegrationTestFromTestCase3) {
+  std::string inp =
+      "1 1\n"
+      "0\n"
+      "5 5\n"
+      "1 1 0 0 0\n"
+      "0 1 1 0 0\n"
+      "1 0 0 1 0\n"
+      "1 1 1 1 0\n"
+      "0 0 1 1 1\n";
+
+  std::string expected =
+      "1 1 * * * \n"
+      "* 1 1 * * \n"
+      "1 * * 1 * \n"
+      "1 1 1 1 * \n"
+      "* * 1 1 1 \n";
+
+  EXPECT_EQ(Digital_Lab::handle_matrix_by_pattern(inp), expected);
+}
+
+TEST(DigitalLab, IntegrationTestFromTestCase4) {
+  std::string inp =
+      "2 6\n"
+      "1 0 0 1 0 1\n"
+      "1 1 1 0 1 0\n"
+      "5 5\n"
+      "1 1 0 0 0\n"
+      "0 1 1 0 0\n"
+      "1 0 0 1 0\n"
+      "1 1 1 1 0\n"
+      "0 0 1 1 1\n";
+
+  std::string expected =
+      "1 1 0 0 0 \n"
+      "0 1 1 0 0 \n"
+      "1 0 0 1 0 \n"
+      "1 1 1 1 0 \n"
+      "0 0 1 1 1 \n";
+
+  EXPECT_EQ(Digital_Lab::handle_matrix_by_pattern(inp), expected);
+}
+
+TEST(DigitalLab, IntegrationTestWithIncorrectPattern) {
+  std::string inp =
+      "2 3\n"
+      "1 0 2\n"
+      "1 2 3\n"
+      "5 5\n"
+      "1 0 2 0 0\n"
+      "1 2 3 0 0\n"
+      "1 2 3 1 0\n"
+      "1 1 1 0 2\n"
+      "0 0 1 2 3\n";
+
+  std::string expected = "Invalid argument: Unspecified value in pattern\n";
+
+  EXPECT_EQ(Digital_Lab::handle_matrix_by_pattern(inp), expected);
 }

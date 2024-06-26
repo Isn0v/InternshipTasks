@@ -1,5 +1,6 @@
 #include "DigitalLab.hpp"
 
+#include <sstream>
 #include <stdexcept>
 #include <unordered_map>
 
@@ -8,18 +9,6 @@ namespace Digital_Lab {
 // Mapping of pattern values to corresponding values in the matrix
 static std::unordered_map<char, char> pattern_map = {{'0', '*'}, {'1', '2'}};
 
-/**
- * @brief Returns a reference to the value at the specified coordinates in the
- * array.
- *
- * @tparam T Type of the array elements
- * @param array Pointer to the array
- * @param shape Pointer to the array shape
- * @param x X-coordinate
- * @param y Y-coordinate
- * @return Reference to the value at the specified coordinates
- * @throws std::out_of_range If the coordinates are out of range
- */
 template <typename T>
 T &get_value(T *array, size_t *shape, size_t x, size_t y) {
   if (x >= shape[1] || y >= shape[0]) {
@@ -28,18 +17,6 @@ T &get_value(T *array, size_t *shape, size_t x, size_t y) {
   return array[y * shape[1] + x];
 }
 
-/**
- * @brief Checks if the specified pattern matches the submatrix in the matrix
- * b starting at the specified coordinates.
- *
- * @param pattern Pointer to the pattern
- * @param pattern_shape Pointer to the pattern shape
- * @param b Pointer to the matrix
- * @param b_shape Pointer to the matrix shape
- * @param initial_x X-coordinate of the starting point
- * @param initial_y Y-coordinate of the starting point
- * @return True if the pattern matches the submatrix, false otherwise
- */
 bool is_match(char *pattern, size_t *pattern_shape, char *b, size_t *b_shape,
               size_t initial_x, size_t initial_y) {
   if (initial_x + pattern_shape[1] > b_shape[1] ||
@@ -62,19 +39,6 @@ bool is_match(char *pattern, size_t *pattern_shape, char *b, size_t *b_shape,
   return true;
 }
 
-/**
- * @brief Transforms the submatrix in the matrix b starting at the specified
- * coordinates by replacing values according to the pattern.
- *
- * @param pattern Pointer to the pattern
- * @param pattern_shape Pointer to the pattern shape
- * @param b Pointer to the matrix
- * @param mask Pointer to the mask indicating which elements have been
- * transformed
- * @param b_shape Pointer to the matrix shape
- * @param initial_x X-coordinate of the starting point
- * @param initial_y Y-coordinate of the starting point
- */
 void transform_by_pattern(char *pattern, size_t *pattern_shape, char *b,
                           bool *mask, size_t *b_shape, size_t initial_x,
                           size_t initial_y) {
@@ -115,6 +79,41 @@ void matrix_pattern_matching(char *pattern, size_t *pattern_shape, char *b,
   }
 
   delete[] mask;
+}
+
+std::string handle_matrix_by_pattern(std::string input) {
+  std::stringstream result;
+  std::istringstream ss(input);
+
+  std::size_t pattern_width, pattern_height;
+  ss >> pattern_height >> pattern_width;
+  char pattern[pattern_height * pattern_width];
+  std::size_t pattern_shape[]{pattern_height, pattern_width};
+  for (std::size_t i = 0; i < pattern_height * pattern_width; i++) {
+    ss >> pattern[i];
+  }
+  std::size_t matrix_width, matrix_height;
+  ss >> matrix_height >> matrix_width;
+  char matrix[matrix_height * matrix_width];
+  std::size_t matrix_shape[]{matrix_height, matrix_width};
+  for (std::size_t i = 0; i < matrix_height * matrix_width; i++) {
+    ss >> matrix[i];
+  }
+  char result_matrix[matrix_height * matrix_width];
+
+  try {
+    matrix_pattern_matching(pattern, pattern_shape, matrix, matrix_shape,
+                            result_matrix);
+    for (std::size_t i = 0; i < matrix_height * matrix_width; i++) {
+      result << result_matrix[i] << " ";
+      if (i % matrix_width == matrix_width - 1) {
+        result << std::endl;
+      }
+    }
+  } catch (const std::invalid_argument &e) {
+    result << "Invalid argument: " << e.what() << std::endl;
+  }
+  return result.str();
 }
 
 }  // namespace Digital_Lab
