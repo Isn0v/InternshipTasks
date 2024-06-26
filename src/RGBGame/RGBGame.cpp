@@ -229,7 +229,7 @@ void RGB_Game::make_move(std::size_t move_count, const Point &point) {
   std::size_t acquired_points = (n_erased - 2) * (n_erased - 2);
   total_score += acquired_points;
 
-  game_log << "Move " << move_count << " at (" << 10 - point.y() << ", "
+  game_log << "Move " << move_count << " at (" << FIELD_HEIGHT - point.y() << ", "
            << point.x() + 1 << ")" << ": removed " << n_erased
            << " balls of color " << color << ", got " << acquired_points
            << " points\n";

@@ -2,7 +2,7 @@
 
 #include <Railroads/Railroads.hpp>
 
-TEST(Railroads, HandleCoachesDefault) {
+TEST(Railroads, IntegrationTestFromTestCase) {
   std::string inp =
       "5\n"
       "1 2 3 4 5\n"
