@@ -91,19 +91,19 @@ std::string handle_matrix_by_pattern(std::string input) {
 
   std::size_t pattern_width, pattern_height;
   ss >> pattern_height >> pattern_width;
-  char pattern[pattern_height * pattern_width];
+  char *pattern = new char[pattern_height * pattern_width];
   std::size_t pattern_shape[]{pattern_height, pattern_width};
   for (std::size_t i = 0; i < pattern_height * pattern_width; i++) {
     ss >> pattern[i];
   }
   std::size_t matrix_width, matrix_height;
   ss >> matrix_height >> matrix_width;
-  char matrix[matrix_height * matrix_width];
+  char *matrix = new char[matrix_height * matrix_width];
   std::size_t matrix_shape[]{matrix_height, matrix_width};
   for (std::size_t i = 0; i < matrix_height * matrix_width; i++) {
     ss >> matrix[i];
   }
-  char result_matrix[matrix_height * matrix_width];
+  char *result_matrix = new char[matrix_height * matrix_width];
 
   try {
     matrix_pattern_matching(pattern, pattern_shape, matrix, matrix_shape,
@@ -117,6 +117,10 @@ std::string handle_matrix_by_pattern(std::string input) {
   } catch (const std::invalid_argument &e) {
     result << "Invalid argument: " << e.what() << std::endl;
   }
+
+  delete[] pattern;
+  delete[] matrix;
+  delete[] result_matrix;
   return result.str();
 }
 

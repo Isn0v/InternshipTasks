@@ -75,7 +75,7 @@ std::string handle_coaches(const std::string& input) {
         break;
       }
 
-      std::size_t arr[num_coaches];
+      std::size_t* arr = new std::size_t[num_coaches];
       arr[0] = tmp;
       for (std::size_t i = 1; i < num_coaches; i++) {
         ss >> arr[i];
@@ -85,6 +85,7 @@ std::string handle_coaches(const std::string& input) {
       } else {
         result << "NO\n";
       }
+      delete[] arr;
     }
   }
   return result.str();
