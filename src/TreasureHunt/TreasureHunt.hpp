@@ -58,6 +58,7 @@ class Wall {
   double get_distance_with_point(const Point &point) const;
 
   bool operator==(const Wall &wall) const;
+  bool operator!=(const Wall &wall) const;
 
   friend std::ostream &operator<<(std::ostream &os, const Wall &wall);
 };

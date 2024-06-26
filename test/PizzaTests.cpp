@@ -49,7 +49,9 @@ TEST(PizzaTest, TestCase5x5) {
 TEST(PizzaTest, IncorrectCase5x5) {
   std::size_t n = 5, m = 5;
   std::vector<Pizza::Point> pizza_coords = {
-      Pizza::Point(1, 0), Pizza::Point(1, 4), Pizza::Point(2, 2),
+      Pizza::Point(1, 0),
+      Pizza::Point(1, 4),
+      Pizza::Point(2, 2),
   };
   std::vector<std::size_t> pizza_capacities = {2, 4, 4};
   Pizza::Pizza_City city(m, n, pizza_coords, pizza_capacities);
@@ -112,4 +114,108 @@ TEST(PizzaTest, IncorrectIntegrationTest) {
       "Impossible to cover city\n"
       "\n";
   EXPECT_EQ(expected, Pizza::handle_pizza_city(inp));
+}
+
+TEST(PizzaTest, TestCaseMinimalCity1x1) {
+  std::size_t n = 1, m = 1;
+  std::vector<Pizza::Point> pizza_coords = {
+      Pizza::Point(0, 0),
+  };
+  std::vector<std::size_t> pizza_capacities = {0};
+  Pizza::Pizza_City city(m, n, pizza_coords, pizza_capacities);
+  std::vector<Pizza::num_permutation_t> expected_permutations = {{0, 0, 0, 0}};
+
+  if (city.cover_all_city()) {
+    EXPECT_EQ(city.get_correct_permutations(), expected_permutations);
+  } else {
+    FAIL() << "Failed to cover all city";
+  }
+  EXPECT_TRUE(city.is_city_covered_correctly());
+}
+
+TEST(PizzaTest, TestCaseHorizontalCity1x4) {
+  std::size_t n = 4, m = 1;
+  std::vector<Pizza::Point> pizza_coords = {
+      Pizza::Point(0, 0),
+  };
+  std::vector<std::size_t> pizza_capacities = {3};
+  Pizza::Pizza_City city(m, n, pizza_coords, pizza_capacities);
+  std::vector<Pizza::num_permutation_t> expected_permutations = {{0, 3, 0, 0}};
+
+  if (city.cover_all_city()) {
+    EXPECT_EQ(city.get_correct_permutations(), expected_permutations);
+  } else {
+    FAIL() << "Failed to cover all city";
+  }
+  EXPECT_TRUE(city.is_city_covered_correctly());
+}
+
+TEST(PizzaTest, TestCaseVerticalCity4x1) {
+  std::size_t n = 1, m = 4;
+  std::vector<Pizza::Point> pizza_coords = {
+      Pizza::Point(0, 0),
+  };
+  std::vector<std::size_t> pizza_capacities = {3};
+  Pizza::Pizza_City city(m, n, pizza_coords, pizza_capacities);
+  std::vector<Pizza::num_permutation_t> expected_permutations = {{0, 0, 3, 0}};
+
+  if (city.cover_all_city()) {
+    EXPECT_EQ(city.get_correct_permutations(), expected_permutations);
+  } else {
+    FAIL() << "Failed to cover all city";
+  }
+  EXPECT_TRUE(city.is_city_covered_correctly());
+}
+
+TEST(PizzaTest, TestCaseFullCity2x2) {
+  std::size_t n = 2, m = 2;
+  std::vector<Pizza::Point> pizza_coords = {
+      Pizza::Point(0, 0),
+      Pizza::Point(0, 1),
+      Pizza::Point(1, 0),
+      Pizza::Point(1, 1),
+  };
+  std::vector<std::size_t> pizza_capacities = {0, 0, 0, 0};
+  Pizza::Pizza_City city(m, n, pizza_coords, pizza_capacities);
+  std::vector<Pizza::num_permutation_t> expected_permutations = {
+      {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}};
+
+  if (city.cover_all_city()) {
+    EXPECT_EQ(city.get_correct_permutations(), expected_permutations);
+  } else {
+    FAIL() << "Failed to cover all city";
+  }
+  EXPECT_TRUE(city.is_city_covered_correctly());
+}
+
+TEST(PizzaTest, TestCaseFullStrechedCity5x5) {
+  std::size_t n = 5, m = 5;
+  std::vector<Pizza::Point> pizza_coords = {
+      Pizza::Point(0, 0), Pizza::Point(1, 1), Pizza::Point(2, 2),
+      Pizza::Point(3, 3), Pizza::Point(4, 4)};
+  std::vector<std::size_t> pizza_capacities = {0, 2, 4, 6, 8};
+  Pizza::Pizza_City city(m, n, pizza_coords, pizza_capacities);
+  std::vector<Pizza::num_permutation_t> expected_permutations = {
+      {0, 0, 0, 0}, {1, 0, 0, 1}, {2, 0, 0, 2}, {3, 0, 0, 3}, {4, 0, 0, 4}};
+
+  if (city.cover_all_city()) {
+    EXPECT_EQ(city.get_correct_permutations(), expected_permutations);
+  } else {
+    FAIL() << "Failed to cover all city";
+  }
+  EXPECT_TRUE(city.is_city_covered_correctly());
+}
+
+TEST(PizzaTest, TestCaseCityWithPizzaAtTheCorner2x2) {
+  std::size_t n = 2, m = 2;
+  std::vector<Pizza::Point> pizza_coords = {
+      Pizza::Point(0, 0)};
+  std::vector<std::size_t> pizza_capacities = {2};
+  Pizza::Pizza_City city(m, n, pizza_coords, pizza_capacities);
+  
+  if (city.cover_all_city()) {
+    FAIL() << "Should not cover all city";
+  } else {
+    EXPECT_FALSE(city.is_city_covered_correctly());
+  }
 }

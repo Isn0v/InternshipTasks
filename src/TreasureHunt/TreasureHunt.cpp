@@ -140,6 +140,8 @@ bool Wall::operator==(const Wall &wall) const {
          y2_ == wall.y2_;
 }
 
+bool Wall::operator!=(const Wall &wall) const { return !(*this == wall); }
+
 std::size_t WallHash::operator()(const Wall &wall) const {
   return std::hash<double>()(wall.x1()) ^ std::hash<double>()(wall.y1()) ^
          std::hash<double>()(wall.x2()) ^ std::hash<double>()(wall.y2());
@@ -208,7 +210,26 @@ std::unordered_set<Wall, WallHash> ray_casting(
   return polygon_walls;
 }
 
-void recursive_wall_traverse(std::vector<Wall> &walls, Point &treasure_point,
+const Point &get_maximum_point(const std::vector<Point> &points) {
+  auto max_point = std::max_element(
+      points.begin(), points.end(), [](const Point &p1, const Point &p2) {
+        return p1.get_distance_with_point(Point(0, 0)) <
+               p2.get_distance_with_point(Point(0, 0));
+      });
+  return *max_point;
+}
+
+const Point &get_minimum_point(const std::vector<Point> &points) {
+  auto min_point = std::min_element(
+      points.begin(), points.end(), [](const Point &p1, const Point &p2) {
+        return p1.get_distance_with_point(Point(0, 0)) <
+               p2.get_distance_with_point(Point(0, 0));
+      });
+  return *min_point;
+}
+
+void recursive_wall_traverse(std::vector<Wall> &walls, Wall entering_wall,
+                             Point &treasure_point,
                              std::size_t &minimal_number_of_walls,
                              std::size_t number_of_walls = 0) {
   const std::vector<Wall> external_walls = {
@@ -240,7 +261,7 @@ void recursive_wall_traverse(std::vector<Wall> &walls, Point &treasure_point,
   // polygon which limit the point we are interested in
   for (auto wall1 : polygon_walls) {
     for (auto wall2 : polygon_walls) {
-      if (wall1 == wall2) {
+      if (wall1 == wall2 || Wall::is_parallel(wall1, wall2)) {
         continue;
       }
       auto intersection = Wall::intersection_point(wall1, wall2);
@@ -256,23 +277,28 @@ void recursive_wall_traverse(std::vector<Wall> &walls, Point &treasure_point,
   // inside the intersection limits
   for (const auto &wall_intersections : wall_to_point_intersections) {
     auto wall = wall_intersections.first;
+    if (wall == entering_wall && wall != Wall(-1, -1, -1, -1)) {
+      // we don't want to go back to the same wall
+      continue;
+    }
     auto intersections = wall_intersections.second;
+    auto min_point = get_minimum_point(intersections);
+    auto max_point = get_maximum_point(intersections);
+
     auto center = wall.get_center();
-    if (center.x() <= std::max(intersections[0].x(), intersections[1].x()) &&
-        center.x() >= std::min(intersections[0].x(), intersections[1].x()) &&
-        center.y() <= std::max(intersections[0].y(), intersections[1].y()) &&
-        center.y() >= std::min(intersections[0].y(), intersections[1].y())) {
+    if (center.x() <= max_point.x() && center.x() >= min_point.x() &&
+        center.y() <= max_point.y() && center.y() >= min_point.y()) {
       double dx = (center.x() - treasure_point.x());
       double dy = (center.y() - treasure_point.y());
       double dist = std::sqrt(dx * dx + dy * dy);
       // the next point shouldn't lie on the wall so we normallize and then add
-      // epsilon
-      dx /= (dist / (std::numeric_limits<double>::epsilon() * 2));
-      dy /= (dist / (std::numeric_limits<double>::epsilon() * 2));
+      // epsilon * 10000 to make sure we don't get a division by zero
+      dx /= (dist / (std::numeric_limits<double>::epsilon() * 10000));
+      dy /= (dist / (std::numeric_limits<double>::epsilon() * 10000));
 
       treasure_point = Point(center.x() + dx, center.y() + dy);
-      recursive_wall_traverse(walls, treasure_point, minimal_number_of_walls,
-                              number_of_walls + 1);
+      recursive_wall_traverse(walls, wall, treasure_point,
+                              minimal_number_of_walls, number_of_walls + 1);
     }
   }
 }
@@ -283,7 +309,8 @@ std::size_t calc_number_of_doors(const std::vector<Wall> &initial_walls,
   std::size_t minimal_number_of_walls = std::numeric_limits<std::size_t>::max();
 
   recursive_wall_traverse(const_cast<std::vector<Wall> &>(initial_walls),
-                          treasure_point, minimal_number_of_walls, 0);
+                          Wall(-1, -1, -1, -1), treasure_point,
+                          minimal_number_of_walls, 0);
 
   return minimal_number_of_walls;
 }

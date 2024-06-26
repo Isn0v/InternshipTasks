@@ -25,8 +25,7 @@ TEST_F(TreasureHuntTestSuite, CorrectNumberOfWallsFromCenter) {
 }
 
 // cannot get to the treasure -> std::numeric_limits<std::size_t>::max()
-TEST_F(TreasureHuntTestSuite,
-       IncorrectNumberOfWallsFromTriangleTopCorner) {
+TEST_F(TreasureHuntTestSuite, IncorrectNumberOfWallsFromTriangleTopCorner) {
   EXPECT_EQ(
       std::numeric_limits<std::size_t>::max(),
       Treasure_Hunt::calc_number_of_doors(walls, Treasure_Hunt::Point(70, 87)));
@@ -73,6 +72,92 @@ TEST(TreasureHuntTest, IncorrectIntergrationTest) {
       "70 87\n";
 
   std::string expected = "Impossible to get to the given treasure point\n";
+
+  EXPECT_EQ(expected, Treasure_Hunt::handle_treasure_hunt(input));
+}
+
+TEST(TreasureHuntTest, IntergrationTestWithNoInteriorWalls) {
+  std::string input =
+      "0\n"
+      "50 50\n";
+
+  std::string expected = "Number of doors = 1\n";
+
+  EXPECT_EQ(expected, Treasure_Hunt::handle_treasure_hunt(input));
+}
+
+TEST(TreasureHuntTest, IntergrationTestWithOneInteriorWall) {
+  std::string input =
+      "1\n"
+      "0 50 100 50\n"
+      "50 50\n";
+
+  std::string expected = "Number of doors = 1\n";
+
+  EXPECT_EQ(expected, Treasure_Hunt::handle_treasure_hunt(input));
+}
+
+TEST(TreasureHuntTest, IntergrationTestWithWallsFormingPath) {
+  std::string input =
+      "2\n"
+      "0 30 100 30\n"
+      "30 0 30 100\n"
+      "75 75\n";
+
+  std::string expected = "Number of doors = 1\n";
+
+  EXPECT_EQ(expected, Treasure_Hunt::handle_treasure_hunt(input));
+}
+
+TEST(TreasureHuntTest, IntergrationTestWithMultipleIntersectingWalls) {
+  std::string input =
+      "4\n"
+      "0 25 100 25\n"
+      "0 75 100 75\n"
+      "25 0 25 100\n"
+      "75 0 75 100\n"
+      "50 50\n";
+
+  std::string expected = "Number of doors = 2\n";
+
+  EXPECT_EQ(expected, Treasure_Hunt::handle_treasure_hunt(input));
+}
+
+TEST(TreasureHuntTest, IntergrationTestNearTheEdge) {
+  std::string input =
+      "3\n"
+      "0 20 100 20\n"
+      "0 40 100 40\n"
+      "20 0 20 100\n"
+      "10.0 10.0\n";
+
+  std::string expected = "Number of doors = 1\n";
+
+  EXPECT_EQ(expected, Treasure_Hunt::handle_treasure_hunt(input));
+}
+
+TEST(TreasureHuntTest, IntergrationTestWithMaximumWalls) {
+  std::string input =
+      "16\n"
+      "0 10 100 10\n"
+      "0 20 100 20\n"
+      "0 30 100 30\n"
+      "0 40 100 40\n"
+      "0 60 100 60\n"
+      "0 70 100 70\n"
+      "0 80 100 80\n"
+      "0 90 100 90\n"
+      "10 0 10 100\n"
+      "20 0 20 100\n"
+      "30 0 30 100\n"
+      "40 0 40 100\n"
+      "60 0 60 100\n"
+      "70 0 70 100\n"
+      "80 0 80 100\n"
+      "90 0 90 100\n"
+      "50.0 50.0\n";
+
+  std::string expected = "Number of doors = 5\n";
 
   EXPECT_EQ(expected, Treasure_Hunt::handle_treasure_hunt(input));
 }
