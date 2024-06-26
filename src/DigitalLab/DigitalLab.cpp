@@ -72,12 +72,16 @@ void matrix_pattern_matching(char *pattern, size_t *pattern_shape, char *b,
     for (size_t y = 0; y < b_shape[0]; y++) {
       if (!get_value(mask, b_shape, x, y) &&
           is_match(pattern, pattern_shape, b, b_shape, x, y)) {
-        transform_by_pattern(pattern, pattern_shape, result, mask, b_shape, x,
-                             y);
+        try {
+          transform_by_pattern(pattern, pattern_shape, result, mask, b_shape, x,
+                               y);
+        } catch (...) {
+          delete[] mask;
+          throw;
+        }
       }
     }
   }
-
   delete[] mask;
 }
 
