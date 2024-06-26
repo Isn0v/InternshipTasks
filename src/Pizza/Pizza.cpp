@@ -177,8 +177,10 @@ bool Pizza_City::backtracking(std::size_t pizzeria_id) {
   for (const auto &permutation : all_permutations) {
     if (add_pizzeria_coverage(pizzeria, permutation)) {
       correct_permutations_.push_back(permutation);
-      if (pizzeria_id == pizza_coords_.size()) {
+      if (pizzeria_id == pizza_coords_.size() && is_city_covered_correctly()) {
         return true;
+      } else if (pizzeria_id == pizza_coords_.size()){
+        return false;
       }
       if (backtracking(pizzeria_id + 1)) {
         return true;

@@ -46,6 +46,21 @@ TEST(PizzaTest, TestCase5x5) {
   EXPECT_TRUE(city.is_city_covered_correctly());
 }
 
+TEST(PizzaTest, IncorrectCase5x5) {
+  std::size_t n = 5, m = 5;
+  std::vector<Pizza::Point> pizza_coords = {
+      Pizza::Point(1, 0), Pizza::Point(1, 4), Pizza::Point(2, 2),
+  };
+  std::vector<std::size_t> pizza_capacities = {2, 4, 4};
+  Pizza::Pizza_City city(m, n, pizza_coords, pizza_capacities);
+
+  if (city.cover_all_city()) {
+    FAIL() << "Should not cover all city";
+  } else {
+    EXPECT_FALSE(city.is_city_covered_correctly());
+  }
+}
+
 TEST(PizzaTest, IntegrationTest) {
   std::string inp =
       "2 2 2\n"
@@ -72,6 +87,29 @@ TEST(PizzaTest, IntegrationTest) {
       "1 2 1 1\n"
       "1 0 0 1\n"
       "0 0 1 1\n"
+      "\n";
+  EXPECT_EQ(expected, Pizza::handle_pizza_city(inp));
+}
+
+TEST(PizzaTest, IncorrectIntegrationTest) {
+  std::string inp =
+      "2 2 2\n"
+      "1 1 1\n"
+      "2 2 1\n"
+      "5 5 4\n"
+      "2 5 4\n"
+      "3 3 5\n"
+      "5 2 2\n"
+      "5 4 2\n"
+      "0\n";
+
+  std::string expected =
+      "Case 1:\n"
+      "0 1 0 0\n"
+      "0 0 0 1\n"
+      "\n"
+      "Case 2:\n"
+      "Impossible to cover city\n"
       "\n";
   EXPECT_EQ(expected, Pizza::handle_pizza_city(inp));
 }

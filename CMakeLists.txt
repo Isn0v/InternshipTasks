@@ -5,7 +5,8 @@ enable_testing()
 
 set(CMAKE_CXX_STANDARD 23)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=address -fsanitize=leak -fsanitize=undefined -Wall -Wextra -Werror")
+# If Linux or WSL, u may use the following flags
+# set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=address -fsanitize=leak -fsanitize=undefined -Wall -Wextra -Werror")
 
 include_directories(src)
 
