@@ -2,6 +2,7 @@
 
 #include <DigitalLab/DigitalLab.hpp>
 #include <sstream>
+#include <fstream>
 #include <string>
 
 template <typename T>
@@ -257,7 +258,7 @@ TEST(DigitalLab, PatternShape2x3WithUnspecifiedValuesTest) {
 }
 
 TEST(DigitalLab, IntegrationTestFromTestCase1) {
-  std::string inp =
+  auto inp =
       "2 2\n"
       "1 0\n"
       "1 1\n"
@@ -267,6 +268,7 @@ TEST(DigitalLab, IntegrationTestFromTestCase1) {
       "1 0 0 1 0\n"
       "1 1 1 1 0\n"
       "0 0 1 1 1\n";
+  std::istringstream in(inp);
 
   std::string expected =
       "1 2 * 0 0 \n"
@@ -275,11 +277,11 @@ TEST(DigitalLab, IntegrationTestFromTestCase1) {
       "2 2 1 2 * \n"
       "0 0 1 2 2 \n";
 
-  EXPECT_EQ(Digital_Lab::handle_matrix_by_pattern(inp), expected);
+  EXPECT_EQ(Digital_Lab::handle_digital_lab(in), expected);
 }
 
 TEST(DigitalLab, IntegrationTestFromTestCase2) {
-  std::string inp =
+  auto inp =
       "1 1\n"
       "1\n"
       "5 5\n"
@@ -288,6 +290,7 @@ TEST(DigitalLab, IntegrationTestFromTestCase2) {
       "1 0 0 1 0\n"
       "1 1 1 1 0\n"
       "0 0 1 1 1\n";
+  std::istringstream in(inp);
 
   std::string expected =
       "2 2 0 0 0 \n"
@@ -296,11 +299,11 @@ TEST(DigitalLab, IntegrationTestFromTestCase2) {
       "2 2 2 2 0 \n"
       "0 0 2 2 2 \n";
 
-  EXPECT_EQ(Digital_Lab::handle_matrix_by_pattern(inp), expected);
+  EXPECT_EQ(Digital_Lab::handle_digital_lab(in), expected);
 }
 
 TEST(DigitalLab, IntegrationTestFromTestCase3) {
-  std::string inp =
+  auto inp =
       "1 1\n"
       "0\n"
       "5 5\n"
@@ -310,6 +313,8 @@ TEST(DigitalLab, IntegrationTestFromTestCase3) {
       "1 1 1 1 0\n"
       "0 0 1 1 1\n";
 
+  std::istringstream in(inp);
+
   std::string expected =
       "1 1 * * * \n"
       "* 1 1 * * \n"
@@ -317,11 +322,11 @@ TEST(DigitalLab, IntegrationTestFromTestCase3) {
       "1 1 1 1 * \n"
       "* * 1 1 1 \n";
 
-  EXPECT_EQ(Digital_Lab::handle_matrix_by_pattern(inp), expected);
+  EXPECT_EQ(Digital_Lab::handle_digital_lab(in), expected);
 }
 
 TEST(DigitalLab, IntegrationTestFromTestCase4) {
-  std::string inp =
+  auto inp =
       "2 6\n"
       "1 0 0 1 0 1\n"
       "1 1 1 0 1 0\n"
@@ -332,6 +337,8 @@ TEST(DigitalLab, IntegrationTestFromTestCase4) {
       "1 1 1 1 0\n"
       "0 0 1 1 1\n";
 
+  std::istringstream in(inp);
+
   std::string expected =
       "1 1 0 0 0 \n"
       "0 1 1 0 0 \n"
@@ -339,11 +346,11 @@ TEST(DigitalLab, IntegrationTestFromTestCase4) {
       "1 1 1 1 0 \n"
       "0 0 1 1 1 \n";
 
-  EXPECT_EQ(Digital_Lab::handle_matrix_by_pattern(inp), expected);
+  EXPECT_EQ(Digital_Lab::handle_digital_lab(in), expected);
 }
 
 TEST(DigitalLab, IntegrationTestWithIncorrectPattern) {
-  std::string inp =
+  auto inp =
       "2 3\n"
       "1 0 2\n"
       "1 2 3\n"
@@ -354,7 +361,37 @@ TEST(DigitalLab, IntegrationTestWithIncorrectPattern) {
       "1 1 1 0 2\n"
       "0 0 1 2 3\n";
 
+  std::istringstream in(inp);
+
   std::string expected = "Invalid argument: Unspecified value in pattern\n";
 
-  EXPECT_EQ(Digital_Lab::handle_matrix_by_pattern(inp), expected);
+  EXPECT_EQ(Digital_Lab::handle_digital_lab(in), expected);
 }
+
+TEST(DigitalLab, IntegrationTestWithEvenHugeMatrixAndCorrectPattern) {
+  std::ifstream in(CMAKE_PROJECT_SOURCE_DIR"/test/data/DigitalLab/huge_input_1.txt");
+  std::ifstream exp(CMAKE_PROJECT_SOURCE_DIR"/test/data/DigitalLab/huge_expected_1.txt");
+  std::ostringstream expected;
+  expected << exp.rdbuf();
+
+  if (!exp.is_open() || !in.is_open()) {
+    FAIL() << "Failed to open expected output file";
+  }
+
+  EXPECT_EQ(Digital_Lab::handle_digital_lab(in), expected.str());
+}
+
+TEST(DigitalLab, IntegrationTestWithOddHugeMatrixAndCorrectPattern) {
+  std::ifstream in(CMAKE_PROJECT_SOURCE_DIR"/test/data/DigitalLab/huge_input_2.txt");
+  std::ifstream exp(CMAKE_PROJECT_SOURCE_DIR"/test/data/DigitalLab/huge_expected_2.txt");
+  std::ostringstream expected;
+  expected << exp.rdbuf();
+
+  if (!exp.is_open() || !in.is_open()) {
+    FAIL() << "Failed to open expected output file";
+  }
+
+  EXPECT_EQ(Digital_Lab::handle_digital_lab(in), expected.str());
+}
+
+// TODO add more tests if needed

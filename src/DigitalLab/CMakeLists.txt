@@ -1,4 +1,3 @@
-file(GLOB_RECURSE SOURCES LIST_DIRECTORIES true *.cpp)
-
 include_directories(.)
-add_library(DigitalLab STATIC ${SOURCES})
+add_library(DigitalLab STATIC DigitalLab.cpp DigitalLab.hpp)
+add_executable(DigitalLab_run main.cpp DigitalLab.cpp)
