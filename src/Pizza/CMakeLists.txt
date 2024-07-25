@@ -1,4 +1,3 @@
-file(GLOB_RECURSE SOURCES LIST_DIRECTORIES true *.cpp)
-
 include_directories(.)
-add_library(Pizza STATIC ${SOURCES})
+add_library(Pizza STATIC Pizza.cpp Pizza.hpp)
+add_executable(Pizza_run main.cpp Pizza.cpp)

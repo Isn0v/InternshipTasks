@@ -5,6 +5,10 @@
 // NOTE: Results differs from what is presented in the task description.
 //       Because of the implementation details of the algorithm, we have various
 //       ways of covering the city.
+
+
+// deprecated
+// ------------------------------------------------------------------------------
 TEST(PizzaTest, TestCase2x2) {
   std::size_t n = 2, m = 2;
   std::vector<Pizza::Point> pizza_coords = {
@@ -62,9 +66,10 @@ TEST(PizzaTest, IncorrectCase5x5) {
     EXPECT_FALSE(city.is_city_covered_correctly());
   }
 }
+// ------------------------------------------------------------------------------
 
 TEST(PizzaTest, IntegrationTest) {
-  std::string inp =
+  auto inp =
       "2 2 2\n"
       "1 1 1\n"
       "2 2 1\n"
@@ -76,6 +81,8 @@ TEST(PizzaTest, IntegrationTest) {
       "5 2 2\n"
       "5 4 2\n"
       "0\n";
+
+  std::istringstream in(inp);
 
   std::string expected =
       "Case 1:\n"
@@ -90,31 +97,9 @@ TEST(PizzaTest, IntegrationTest) {
       "1 0 0 1\n"
       "0 0 1 1\n"
       "\n";
-  EXPECT_EQ(expected, Pizza::handle_pizza_city(inp));
+  EXPECT_EQ(expected, Pizza::handle_pizza_city(in));
 }
 
-TEST(PizzaTest, IncorrectIntegrationTest) {
-  std::string inp =
-      "2 2 2\n"
-      "1 1 1\n"
-      "2 2 1\n"
-      "5 5 4\n"
-      "2 5 4\n"
-      "3 3 5\n"
-      "5 2 2\n"
-      "5 4 2\n"
-      "0\n";
-
-  std::string expected =
-      "Case 1:\n"
-      "0 1 0 0\n"
-      "0 0 0 1\n"
-      "\n"
-      "Case 2:\n"
-      "Impossible to cover city\n"
-      "\n";
-  EXPECT_EQ(expected, Pizza::handle_pizza_city(inp));
-}
 
 TEST(PizzaTest, TestCaseMinimalCity1x1) {
   std::size_t n = 1, m = 1;

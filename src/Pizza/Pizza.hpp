@@ -2,14 +2,16 @@
 
 #include <iostream>
 #include <unordered_map>
+#include <unordered_set>
 #include <utility>
 #include <vector>
 
 namespace Pizza {
-  
+
 // 0 -> north, 1 -> east, 2 -> south, 3 -> west indexes for coverage
 typedef std::tuple<std::size_t, std::size_t, std::size_t, std::size_t>
     num_permutation_t;
+
 class Point {
  private:
   std::size_t x_, y_;
@@ -29,32 +31,12 @@ class Point {
   friend std::ostream &operator<<(std::ostream &os, const Point &wall);
 };
 
+typedef std::pair<Point, std::size_t> pizza_data_t;
+
 struct PointHash {
   std::size_t operator()(const Point &point) const;
 };
 
-/** @brief A class representing a city with pizza shops and covered area.
-*
-* This class represents a city with pizza shops and their covered area.
-* It provides methods to cover all city with pizza shops and to check if
-* the covered area is correctly covered.
-*
-* @details
-* The class stores the city's size, the pizza shops' coordinates and capacities,
-* and the covered area. The covered area is represented by a 2D array of size
-* field_height_ and field_width_, where each element represents a cell in
-* the city. If a cell is covered by a pizza shop, the value of the cell is
-* equal to the index of the pizza shop + 1. If the cell is not covered, the
-* value is 0.
-*
-* The class provides methods to add and remove coverage of a pizza shop on
-* the covered area, and to check if all pizza shops are covered.
-*
-* The class also provides methods to get the covered area and to get the
-* correct permutations of coverage of each pizza shop.
-*
-* The class' destructor frees the memory allocated for the covered area.
-*/
 class Pizza_City {
  private:
   std::size_t **city_field_;
@@ -72,8 +54,23 @@ class Pizza_City {
                                 const num_permutation_t &permutation);
 
   bool backtracking(std::size_t pizzeria_id);
+  num_permutation_t get_expansion_constraints(const Point &pizzeria);
+
+  //--------------------------------------------------------------------------------
+  std::vector<Point> get_possible_expansion_moves(const Point &pizzeria) const;
+  double get_distance_to_nearest_busy_point(Point current_point,
+                                            std::size_t pizzeria_id,
+                                            std::size_t filling_step);
+  bool is_pizzeria_point_reachable_to_other_pizzeria(const Point &point, std::size_t pizzeria_id) const;
+  //--------------------------------------------------------------------------------
 
  public:
+  //--------------------------------------------------------------------------------
+  void iterating_coverage();
+  // TODO make private
+  std::vector<num_permutation_t>
+      correct_expansion;  // pizzeria_id -> (up, right, down, left)
+  //--------------------------------------------------------------------------------
   Pizza_City(std::size_t field_height, std::size_t field_width,
              const std::vector<Point> &pizza_coords,
              const std::vector<std::size_t> &pizza_capacities);
@@ -86,33 +83,14 @@ class Pizza_City {
   ~Pizza_City();
 };
 
-/**
- * @brief Finds all permutations of size target in the interval [0, capacity].
- *
- * @param capacity The upper bound of the interval.
- * @param target The size of the permutations to find.
- * @return A vector of tuples representing the permutations.
- */
 std::vector<num_permutation_t> find_permutations(std::size_t capacity,
-                                                 std::size_t target);
+                                                 std::size_t target,
+                                                 num_permutation_t constraints);
 
-/**
- * @brief Gets the value at the specified index from the given permutation.
- *
- * @param permutation The permutation to get the value from.
- * @param index The index of the value to get.
- * @return The value at the specified index.
- * @throws std::invalid_argument If the index is invalid.
- */
 std::size_t get_permutation_value(const num_permutation_t &permutation,
                                   std::size_t index);
 
-/**
- * @brief Parses the input string and generates a string with the solution.
- *
- * @param input The input string to parse.
- * @return The generated string with the solution.
- */
-std::string handle_pizza_city(const std::string &input);
+std::string handle_pizza_city(std::istream &input);
+std::string handle_iterating_pizza_city(std::istream &input);
 
 }  // namespace Pizza

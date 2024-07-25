@@ -1,7 +1,7 @@
 height = 10**3 - 1
 width = 10**3 - 1
 
-with open("test/data/DigitalLab/huge_input_2.txt", "w") as f:
+with open("test/data/Pizza/huge_input_2.txt", "w") as f:
     f.write("2 2\n")
     f.write("1 0\n")
     f.write("1 1\n")
@@ -17,7 +17,7 @@ with open("test/data/DigitalLab/huge_input_2.txt", "w") as f:
             f.write("1 ")
         f.write("\n")
 
-with open("test/data/DigitalLab/huge_expected_2.txt", "w") as f:
+with open("test/data/Pizza/huge_expected_2.txt", "w") as f:
     f.write("1 1 "*(width//2))
     f.write("1 ")
     f.write("\n")
