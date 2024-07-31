@@ -66,56 +66,92 @@ def is_field_filled(field):
     return True
 
 
+def generate_pizza_test(height, width, pizzerias_counter):
 
-
-height = 8
-width = 8
-pizzerias_counter = 20
-total_capacity = width * height - pizzerias_counter
-
-all_expansions= []
-all_pizza_points = []
-all_capacities = []
-
-field = [[0 for _ in range(width)] for _ in range(height)]
-
-while (not is_field_filled(field)):
-    field = [[0 for _ in range(width)] for _ in range(height)]
+    height = 8
+    width = 8
+    pizzerias_counter = 20
     total_capacity = width * height - pizzerias_counter
+
     all_expansions= []
     all_pizza_points = []
     all_capacities = []
-    for i in range(1, pizzerias_counter + 1):
-        x, y = randint(0, width - 1), randint(0, height - 1)
-        while field[y][x] != 0:
+
+    field = [[0 for _ in range(width)] for _ in range(height)]
+
+    while (not is_field_filled(field)):
+        field = [[0 for _ in range(width)] for _ in range(height)]
+        total_capacity = width * height - pizzerias_counter
+        all_expansions= []
+        all_pizza_points = []
+        all_capacities = []
+        for i in range(1, pizzerias_counter + 1):
             x, y = randint(0, width - 1), randint(0, height - 1)
-        boundary_limits = get_boundary_limits((x, y), field)
-        capacity = randint(0, min(sum(boundary_limits), total_capacity))
-        total_capacity -= capacity
-        expansion = gen_expansion(boundary_limits, capacity)
-        expand(i, (x, y), field, expansion)
+            while field[y][x] != 0:
+                x, y = randint(0, width - 1), randint(0, height - 1)
+            boundary_limits = get_boundary_limits((x, y), field)
+            capacity = randint(0, min(sum(boundary_limits), total_capacity))
+            total_capacity -= capacity
+            expansion = gen_expansion(boundary_limits, capacity)
+            expand(i, (x, y), field, expansion)
 
-        all_expansions.append(expansion)
-        all_pizza_points.append((x, y))
-        all_capacities.append(capacity)
-for i in range(height - 1, -1, -1):
-    print(" ".join(map(str, field[i])))
+            all_expansions.append(expansion)
+            all_pizza_points.append((x, y))
+            all_capacities.append(capacity)
+            
+    return all_expansions, all_pizza_points, all_capacities
     
-# print(*all_expansions, sep=" ")
-# print(*all_pizza_points, sep=" ")
+# for i in range(height - 1, -1, -1):
+#     print(" ".join(map(str, field[i])))
+    
+# # print(*all_expansions, sep=" ")
+# # print(*all_pizza_points, sep=" ")
 
-with open("test/data/Pizza/input_9.txt", "w") as f:
-    f.write(f"{width} {height} {pizzerias_counter}\n")
-    for i in range(1, pizzerias_counter + 1):
-        f.write(f"{all_pizza_points[i - 1][0] + 1} {all_pizza_points[i - 1][1] + 1} {all_capacities[i - 1]}\n")
-    f.write("0\n")
-with open("test/data/Pizza/expected_9.txt", "w") as f:
-    for a, b, c, d in all_expansions:
-        f.write(f"{a} {b} {c} {d}\n")
-    f.write("\n")
+# with open("test/data/Pizza/input_9.txt", "w") as f:
+#     f.write(f"{width} {height} {pizzerias_counter}\n")
+#     for i in range(1, pizzerias_counter + 1):
+#         f.write(f"{all_pizza_points[i - 1][0] + 1} {all_pizza_points[i - 1][1] + 1} {all_capacities[i - 1]}\n")
+#     f.write("0\n")
+# with open("test/data/Pizza/expected_9.txt", "w") as f:
+#     for a, b, c, d in all_expansions:
+#         f.write(f"{a} {b} {c} {d}\n")
+#     f.write("\n")
 
-# for i in range(9, 10):
-#     with open(f"test/data/Pizza/expected_{i}.txt", "w") as f:
+# for i in range(1, 10):
+#     with open(f"test/data/Railroads/expected_{i}.txt", "w") as f:
 #         pass
-#     with open(f"test/data/Pizza/input_{i}.txt", "w") as f:
+#     with open(f"test/data/Railroads/input_{i}.txt", "w") as f:
 #         pass
+
+def count__reversed_inversions_naive(array):
+    count = 0
+    for i in range(len(array)):
+        for j in range(i + 1, len(array)):
+            if array[i] > array[j]:
+                count += 1
+    return count
+
+
+def generate_railroads_test(coaches_count):
+    array_generated = [i + 1 for i in range(coaches_count)]
+    shuffle(array_generated)
+    answer = ""
+        
+    inv = count__reversed_inversions_naive(list(array_generated))
+    if (inv % 2 == 0):
+        answer = "YES"
+    else:
+        answer = "NO"
+    return list(array_generated), answer
+
+
+if __name__ == "__main__":
+    n = 1000
+    arr, ans = generate_railroads_test(n)
+    with open(f"test/data/Railroads/input_9.txt", "w") as f:
+        f.write(f"{n}\n")
+        for i in arr:
+            f.write(f"{i}\n")
+        f.write("0\n0\n")
+    with open(f"test/data/Railroads/expected_9.txt", "w") as f:
+        f.write(f"\n{ans}\n\n")

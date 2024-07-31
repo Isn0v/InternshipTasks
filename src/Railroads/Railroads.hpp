@@ -2,6 +2,7 @@
 
 #include <string>
 #include <utility>
+#include <sstream>
 
 namespace Railroads {
 
@@ -37,6 +38,6 @@ bool can_marshal_coaches(std::size_t* arr, std::size_t num_coaches);
  * If the coaches can be marshaled, the response string will contain "YES".
  * Otherwise, it will contain "NO".
  */
-std::string handle_coaches(const std::string& input);
+std::string handle_coaches(std::istream& input);
 
 }  // namespace Railroads

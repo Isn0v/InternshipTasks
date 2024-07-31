@@ -58,19 +58,18 @@ bool can_marshal_coaches(std::size_t* arr, std::size_t num_coaches) {
   return inv % 2 == 0;
 }
 
-std::string handle_coaches(const std::string& input) {
+std::string handle_coaches(std::istream& input) {
   std::stringstream result;
-  std::istringstream ss(input);
   std::size_t num_coaches, tmp;
   while (1) {
-    ss >> num_coaches;
+    input >> num_coaches;
     if (num_coaches == 0) {
       result << "\n";
       break;
     }
     result << "\n";
     while (1) {
-      ss >> tmp;
+      input >> tmp;
       if (tmp == 0) {
         break;
       }
@@ -78,7 +77,7 @@ std::string handle_coaches(const std::string& input) {
       std::size_t* arr = new std::size_t[num_coaches];
       arr[0] = tmp;
       for (std::size_t i = 1; i < num_coaches; i++) {
-        ss >> arr[i];
+        input >> arr[i];
       }
       if (can_marshal_coaches(arr, num_coaches)) {
         result << "YES\n";

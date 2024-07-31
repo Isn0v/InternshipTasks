@@ -1,4 +1,3 @@
-file(GLOB_RECURSE SOURCES LIST_DIRECTORIES true *.cpp)
-
 include_directories(.)
-add_library(Railroads STATIC ${SOURCES})
+add_library(Railroads STATIC Railroads.cpp Railroads.hpp)
+add_executable(Railroads_run main.cpp Railroads.cpp)
