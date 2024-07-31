@@ -1,4 +1,3 @@
-file(GLOB_RECURSE SOURCES LIST_DIRECTORIES true *.cpp)
-
 include_directories(.)
-add_library(TreasureHunt STATIC ${SOURCES})
+add_library(TreasureHunt STATIC TreasureHunt.cpp TreasureHunt.hpp)
+add_executable(TreasureHunt_run main.cpp TreasureHunt.cpp)

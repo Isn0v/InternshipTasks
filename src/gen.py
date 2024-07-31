@@ -1,4 +1,78 @@
 from random import randint, shuffle
+import matplotlib.pyplot as plt
+
+
+def plot_walls_and_treasure(walls, treasure):
+    fig, ax = plt.subplots()
+    for wall in walls:
+        x1, y1, x2, y2 = wall
+        ax.plot([x1, x2], [y1, y2], 'b-', lw=2)
+    points = [
+        (44.864757862142739, 49.009187422290267),
+        (45.135242137857261, 50.990812577709733)
+    ]
+
+    # Отметить местоположение сокровища
+    for point in points:
+        ax.plot(point[0], point[1], 'ro', markersize=10)
+    ax.plot(treasure[0], treasure[1], 'ro', markersize=10)
+
+    # Установить границы графика и метки
+    ax.set_xlim(-10, 110)
+    ax.set_ylim(-10, 110)
+    ax.set_xlabel('X')
+    ax.set_ylabel('Y')
+    ax.set_title('Walls and Treasure Location')
+    ax.grid(True)
+
+    plt.show()
+
+
+if __name__ == '__main__':
+    walls = [
+        (5, 0, 25, 100),
+        (0, 10, 100, 30),
+        (10, 0, 100, 20),
+        (20, 100, 40, 0),
+        (15, 0, 15, 100),
+        (0, 25, 100, 50),
+        (55, 0, 55, 100),
+        (0, 10, 90, 100),
+        (0, 40, 100, 60),
+        (60, 0, 60, 100),
+        (0, 55, 100, 70),
+        (0, 30, 60, 100),
+        (0, 70, 100, 80),
+        (70, 0, 70, 100),
+        (40, 0, 40, 100),
+        (0, 80, 100, 85),
+        (80, 0, 80, 100),
+        (45, 0, 45, 100),
+        (0, 85, 100, 90),
+        (85, 0, 85, 100),
+        (0, 90, 100, 95),
+        (90, 0, 90, 100),
+        (55, 0, 55, 100),
+        (0, 95, 100, 100),
+        (95, 0, 95, 100),
+        (60, 0, 60, 100),
+        (0, 100, 100, 100),
+        (65, 0, 65, 100),
+        (70, 0, 70, 100),
+    ]
+    treasure = (50.5, 50.5)
+    # treasure = (95.999999999994472, 49.999996672921107)
+    # walls = [
+    #     (20, 0, 37, 100),
+    #     (40, 0, 76, 100),
+    #     (85, 0, 0, 75),
+    #     (100, 90, 0, 90),
+    #     (0, 71, 100, 61),
+    #     (0, 14, 100, 38),
+    #     (100, 47, 47, 100),
+    # ]
+    # treasure = (50, 27)
+    plot_walls_and_treasure(walls, treasure)
 
 # boundary_limits = (top, right, bottom, left) limits of expansion
 
@@ -73,7 +147,7 @@ def generate_pizza_test(height, width, pizzerias_counter):
     pizzerias_counter = 20
     total_capacity = width * height - pizzerias_counter
 
-    all_expansions= []
+    all_expansions = []
     all_pizza_points = []
     all_capacities = []
 
@@ -82,7 +156,7 @@ def generate_pizza_test(height, width, pizzerias_counter):
     while (not is_field_filled(field)):
         field = [[0 for _ in range(width)] for _ in range(height)]
         total_capacity = width * height - pizzerias_counter
-        all_expansions= []
+        all_expansions = []
         all_pizza_points = []
         all_capacities = []
         for i in range(1, pizzerias_counter + 1):
@@ -98,12 +172,12 @@ def generate_pizza_test(height, width, pizzerias_counter):
             all_expansions.append(expansion)
             all_pizza_points.append((x, y))
             all_capacities.append(capacity)
-            
+
     return all_expansions, all_pizza_points, all_capacities
-    
+
 # for i in range(height - 1, -1, -1):
 #     print(" ".join(map(str, field[i])))
-    
+
 # # print(*all_expansions, sep=" ")
 # # print(*all_pizza_points, sep=" ")
 
@@ -117,13 +191,14 @@ def generate_pizza_test(height, width, pizzerias_counter):
 #         f.write(f"{a} {b} {c} {d}\n")
 #     f.write("\n")
 
-# for i in range(1, 5):
-#     with open(f"test/data/RGBGame/expected_{i}.txt", "w") as f:
+# for i in range(8, 12):
+#     with open(f"test/data/TreasureHunt/expected_{i}.txt", "w") as f:
 #         pass
-#     with open(f"test/data/RGBGame/input_{i}.txt", "w") as f:
+#     with open(f"test/data/TreasureHunt/input_{i}.txt", "w") as f:
 #         pass
 
-def count__reversed_inversions_naive(array):
+
+def count_reversed_inversions_naive(array):
     count = 0
     for i in range(len(array)):
         for j in range(i + 1, len(array)):
@@ -136,8 +211,8 @@ def generate_railroads_test(coaches_count):
     array_generated = [i + 1 for i in range(coaches_count)]
     shuffle(array_generated)
     answer = ""
-        
-    inv = count__reversed_inversions_naive(list(array_generated))
+
+    inv = count_reversed_inversions_naive(list(array_generated))
     if (inv % 2 == 0):
         answer = "YES"
     else:
@@ -148,10 +223,11 @@ def generate_railroads_test(coaches_count):
 # if __name__ == "__main__":
 #     n = 1000
 #     arr, ans = generate_railroads_test(n)
-#     with open(f"test/data/Railroads/input_9.txt", "w") as f:
+
+#     with open(f"test/data/Railroads/input_8.txt", "w") as f:
 #         f.write(f"{n}\n")
 #         for i in arr:
-#             f.write(f"{i}\n")
+#             f.write(f"{i} ")
 #         f.write("0\n0\n")
-#     with open(f"test/data/Railroads/expected_9.txt", "w") as f:
+#     with open(f"test/data/Railroads/expected_8.txt", "w") as f:
 #         f.write(f"\n{ans}\n\n")

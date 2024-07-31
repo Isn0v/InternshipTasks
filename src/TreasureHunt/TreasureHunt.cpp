@@ -229,9 +229,14 @@ const Point &get_minimum_point(const std::vector<Point> &points) {
 }
 
 void recursive_wall_traverse(std::vector<Wall> &walls, Wall entering_wall,
-                             Point &treasure_point,
+                             const Point &treasure_point,
                              std::size_t &minimal_number_of_walls,
                              std::size_t number_of_walls = 0) {
+  if (number_of_walls > minimal_number_of_walls) {
+    return;
+  }
+  double epsillon = 1e-8;
+
   const std::vector<Wall> external_walls = {
       Wall(FIELD_START_BOUNDARY, FIELD_START_BOUNDARY, FIELD_END_BOUNDARY,
            FIELD_START_BOUNDARY),
@@ -254,7 +259,7 @@ void recursive_wall_traverse(std::vector<Wall> &walls, Wall entering_wall,
     }
   }
 
-  std::unordered_map<Wall, std::vector<Point>, WallHash>
+  std::unordered_map<Wall, std::unordered_set<Point, PointHash>, WallHash>
       wall_to_point_intersections;
 
   // find all possible intersections of each other walls which compiles the
@@ -268,8 +273,8 @@ void recursive_wall_traverse(std::vector<Wall> &walls, Wall entering_wall,
       if (intersection.out_of_field()) {
         continue;
       }
-      wall_to_point_intersections[wall1].push_back(intersection);
-      wall_to_point_intersections[wall2].push_back(intersection);
+      wall_to_point_intersections[wall1].insert(intersection);
+      wall_to_point_intersections[wall2].insert(intersection);
     }
   }
 
@@ -282,22 +287,59 @@ void recursive_wall_traverse(std::vector<Wall> &walls, Wall entering_wall,
       continue;
     }
     auto intersections = wall_intersections.second;
-    auto min_point = get_minimum_point(intersections);
-    auto max_point = get_maximum_point(intersections);
+    std::vector<Point> bounds;
+
+    for (const auto &intersection : intersections) {
+      auto min_x = std::min(intersection.x(), treasure_point.x());
+      auto max_x = std::max(intersection.x(), treasure_point.x());
+      auto min_y = std::min(intersection.y(), treasure_point.y());
+      auto max_y = std::max(intersection.y(), treasure_point.y());
+      bool bound_found = true;
+
+      Wall temp_wall(treasure_point.x(), treasure_point.y(), intersection.x(),
+                     intersection.y());
+      for (const auto &checking_wall : polygon_walls) {
+        if (checking_wall == wall || checking_wall == entering_wall) {
+          continue;
+        }
+        auto intersection_point =
+            Wall::intersection_point(temp_wall, checking_wall);
+
+        bool inside_bound_x = intersection_point.x() - min_x >= epsillon &&
+                              max_x - intersection_point.x() >= epsillon;
+        bool inside_bound_y = intersection_point.y() - min_y >= epsillon &&
+                              max_y - intersection_point.y() >= epsillon;
+        if (inside_bound_x && inside_bound_y) {
+          bound_found = false;
+          break;
+        }
+      }
+
+      if (bound_found) {
+        bounds.push_back(intersection);
+      }
+    }
+
+    if (bounds.empty()) {
+      continue;
+    }
+
+    auto first_bound = get_minimum_point(bounds);
+    auto second_bound = get_maximum_point(bounds);
 
     auto center = wall.get_center();
-    if (center.x() <= max_point.x() && center.x() >= min_point.x() &&
-        center.y() <= max_point.y() && center.y() >= min_point.y()) {
+    if (center.x() <= second_bound.x() && center.x() >= first_bound.x() &&
+        center.y() <= second_bound.y() && center.y() >= first_bound.y()) {
       double dx = (center.x() - treasure_point.x());
       double dy = (center.y() - treasure_point.y());
       double dist = std::sqrt(dx * dx + dy * dy);
-      // the next point shouldn't lie on the wall so we normallize and then add
-      // epsilon * 10000 to make sure we don't get a division by zero
-      dx /= (dist / (std::numeric_limits<double>::epsilon() * 10000));
-      dy /= (dist / (std::numeric_limits<double>::epsilon() * 10000));
+      // the next point shouldn't lie on the wall so we normallize and then
+      // add epsilon * 10000 to make sure we don't get a division by zero
+      dx /= (dist / (epsillon));
+      dy /= (dist / (epsillon));
 
-      treasure_point = Point(center.x() + dx, center.y() + dy);
-      recursive_wall_traverse(walls, wall, treasure_point,
+      Point new_treasure_point = Point(center.x() + dx, center.y() + dy);
+      recursive_wall_traverse(walls, wall, new_treasure_point,
                               minimal_number_of_walls, number_of_walls + 1);
     }
   }
@@ -315,12 +357,11 @@ std::size_t calc_number_of_doors(const std::vector<Wall> &initial_walls,
   return minimal_number_of_walls;
 }
 
-std::string handle_treasure_hunt(const std::string &input) {
-  std::istringstream ss(input);
+std::string handle_treasure_hunt(std::istream &input) {
   std::stringstream result;
 
   std::size_t number_of_walls;
-  ss >> number_of_walls;
+  input >> number_of_walls;
   std::vector<Wall> walls(number_of_walls + NUMBER_OF_OUTER_WALLS);
   walls[0] = Wall(FIELD_START_BOUNDARY, FIELD_START_BOUNDARY,
                   FIELD_END_BOUNDARY, FIELD_START_BOUNDARY);
@@ -333,11 +374,11 @@ std::string handle_treasure_hunt(const std::string &input) {
   for (std::size_t i = NUMBER_OF_OUTER_WALLS;
        i < number_of_walls + NUMBER_OF_OUTER_WALLS; i++) {
     double x1, y1, x2, y2;
-    ss >> x1 >> y1 >> x2 >> y2;
+    input >> x1 >> y1 >> x2 >> y2;
     walls[i] = Wall(x1, y1, x2, y2);
   }
   double treasure_x, treasure_y;
-  ss >> treasure_x >> treasure_y;
+  input >> treasure_x >> treasure_y;
 
   auto number_of_doors =
       calc_number_of_doors(walls, Point(treasure_x, treasure_y));

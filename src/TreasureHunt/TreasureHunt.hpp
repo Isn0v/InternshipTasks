@@ -112,8 +112,9 @@ std::size_t calc_number_of_doors(const std::vector<Wall> &initial_walls,
  *
  * The function initializes the field based on the input string and calculates
  * the number of doors to the treasure using the `calc_number_of_doors`
- * function. It then returns the solution string like Number of doors = [NUMBER_OF_DOORS].
+ * function. It then returns the solution string like Number of doors =
+ * [NUMBER_OF_DOORS].
  */
-std::string handle_treasure_hunt(const std::string &input);
+std::string handle_treasure_hunt(std::istream &input);
 
 }  // namespace Treasure_Hunt
