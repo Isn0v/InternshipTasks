@@ -49,7 +49,7 @@
 
 
 class PizzaTest : public ::testing::TestWithParam<int> {};
-INSTANTIATE_TEST_SUITE_P(Pizza, PizzaTest, ::testing::Range(1, 8));
+INSTANTIATE_TEST_SUITE_P(Pizza, PizzaTest, ::testing::Range(1, 9));
 
 // TODO add more tests if needed
 TEST_P(PizzaTest, IntegrationTest) {
