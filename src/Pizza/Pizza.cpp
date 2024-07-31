@@ -1,5 +1,6 @@
 #include "Pizza.hpp"
 
+#define DEBUG_MODE
 
 #include <algorithm>
 #include <cmath>
@@ -86,8 +87,7 @@ std::vector<Point> Pizza_City::get_possible_expansion_moves(
 }
 
 double Pizza_City::get_distance_to_nearest_busy_point(Point current_point,
-                                               std::size_t pizzeria_id,
-                                               std::size_t filling_step) {
+                                                      std::size_t pizzeria_id) {
   if (current_point.x() < 0 || current_point.x() >= field_width_ ||
       current_point.y() < 0 || current_point.y() >= field_height_) {
     std::stringstream report;
@@ -132,7 +132,8 @@ double Pizza_City::get_distance_to_nearest_busy_point(Point current_point,
       }
 
       if (traverse_id != pizzeria_id &&
-          pizza_data_[traverse_id - 1].second >= filling_step) {
+          pizza_data_[traverse_id - 1].second >
+              currently_expanded_[traverse_id - 1]) {
         std::size_t distance_x = traverse_point.x() > current_point.x()
                                      ? traverse_point.x() - current_point.x()
                                      : current_point.x() - traverse_point.x();
@@ -155,7 +156,7 @@ double Pizza_City::get_distance_to_nearest_busy_point(Point current_point,
   return min_distance;
 }
 
-bool Pizza_City::is_pizzeria_point_reachable_to_other_pizzeria(
+bool Pizza_City::is_pizzeria_point_reachable_to_other_pizzerias(
     const Point &point, std::size_t pizzeria_id) const {
   auto side_traverse = [&](int dx, int dy) {
     std::size_t j = 0;
@@ -171,11 +172,15 @@ bool Pizza_City::is_pizzeria_point_reachable_to_other_pizzeria(
           city_field_[point.y() + dy * j][point.x() + dx * j];
       if (current_id == 0) {
         continue;
-      } else if (current_id != 0 && current_id != pizzeria_id &&
-                 pizza_data_[current_id - 1].second > j &&
-                 pizza_data_[current_id - 1].first ==
-                     Point(point.x() + dx * j, point.y() + dy * j)) {
-        return true;
+      } else if (current_id != pizzeria_id) {
+        if (pizza_data_[current_id - 1].first ==
+                Point(point.x() + dx * j, point.y() + dy * j) &&
+            j <= pizza_data_[current_id - 1].second -
+                     currently_expanded_[current_id - 1]) {
+          return true;
+        } else {
+          break;
+        }
       }
     }
     return false;
@@ -185,18 +190,88 @@ bool Pizza_City::is_pizzeria_point_reachable_to_other_pizzeria(
          side_traverse(0, -1);
 }
 
+std::size_t Pizza_City::expand_while_allowed(std::size_t pizzeria_id) {
+  std::size_t busy_points_count = 0;
+  pizza_data_t pizzeria_and_capacity = pizza_data_[pizzeria_id - 1];
+
+  std::vector<std::pair<int, int>> d_xy = {{0, 1}, {1, 0}, {0, -1}, {-1, 0}};
+  int d_x, d_y;
+  for (std::size_t i = 0;
+       i < d_xy.size() && busy_points_count < pizzeria_and_capacity.second;
+       i++) {
+    std::size_t j = 0;
+    std::tie(d_x, d_y) = d_xy[i];
+    while (busy_points_count < pizzeria_and_capacity.second) {
+      j++;
+      Point expansion_point = {pizzeria_and_capacity.first.x() + j * d_x,
+                               pizzeria_and_capacity.first.y() + j * d_y};
+
+      if (expansion_point.x() < 0 || expansion_point.x() >= field_width_ ||
+          expansion_point.y() < 0 || expansion_point.y() >= field_height_) {
+        break;
+      }
+      std::size_t current_id =
+          city_field_[expansion_point.y()][expansion_point.x()];
+      if (current_id == pizzeria_id) {
+        continue;
+      }
+
+      if (current_id == 0 && !is_pizzeria_point_reachable_to_other_pizzerias(
+                                 expansion_point, pizzeria_id)) {
+        expand_by_point(expansion_point, pizzeria_id);
+        busy_points_count++;
+        currently_expanded_[pizzeria_id - 1]++;
+      } else {
+        break;
+      }
+    }
+  }
+
+  return busy_points_count;
+}
+
+void Pizza_City::expand_by_point(const Point &point, std::size_t pizzeria_id) {
+  city_field_[point.y()][point.x()] = pizzeria_id;
+  pizza_data_t pizzeria_and_capacity = pizza_data_[pizzeria_id - 1];
+
+  int top_increment = point.y() > pizzeria_and_capacity.first.y() ? 1 : 0;
+  int right_increment = point.x() > pizzeria_and_capacity.first.x() ? 1 : 0;
+  int left_increment = point.x() < pizzeria_and_capacity.first.x() ? 1 : 0;
+  int down_increment = point.y() < pizzeria_and_capacity.first.y() ? 1 : 0;
+
+  correct_expansions[pizzeria_id - 1] = {
+      std::get<0>(correct_expansions[pizzeria_id - 1]) + top_increment,
+      std::get<1>(correct_expansions[pizzeria_id - 1]) + right_increment,
+      std::get<2>(correct_expansions[pizzeria_id - 1]) + down_increment,
+      std::get<3>(correct_expansions[pizzeria_id - 1]) + left_increment,
+  };
+
+  currently_expanded_[pizzeria_id - 1]++;
+}
+
 void Pizza_City::iterating_coverage() {
   correct_expansions =
-      std::vector<num_permutation_t>(pizza_data_.size(), {0, 0, 0, 0});
-  std::size_t filling_step = 0, busy_points_count = 0;
+      std::vector<num_expansion_t>(pizza_data_.size(), {0, 0, 0, 0});
+  std::size_t busy_points_count = 0;
 
   // expansion iteration
   while (busy_points_count <
          field_height_ * field_width_ - pizza_data_.size()) {
-    filling_step++;
     for (std::size_t i = 0; i < pizza_data_.size(); i++) {
       pizza_data_t pizzeria_and_capacity = pizza_data_[i];
-      if (pizzeria_and_capacity.second < filling_step) {
+      busy_points_count += expand_while_allowed(i + 1);
+#ifdef DEBUG_MODE
+      std::cout << "City: " << std::endl;
+      for (std::size_t y = field_height_ - 1; y >= 0 && y < field_height_;
+           --y) {
+        for (std::size_t x = 0; x < field_width_; x++) {
+          std::cout << city_field_[y][x] << " ";
+        }
+        std::cout << std::endl;
+      }
+      std::cout << std::endl;
+#endif
+      if (pizzeria_and_capacity.second == currently_expanded_[i]) {
         continue;
       }
 
@@ -205,8 +280,8 @@ void Pizza_City::iterating_coverage() {
       std::unordered_map<Point, double, PointHash> possible_moves_distances;
 
       for (std::size_t j = 0; j < possible_moves.size(); j++) {
-        auto distance = get_distance_to_nearest_busy_point(possible_moves[j],
-                                                           i + 1, filling_step);
+        auto distance =
+            get_distance_to_nearest_busy_point(possible_moves[j], i + 1);
         possible_moves_distances[possible_moves[j]] = distance;
       }
 
@@ -217,33 +292,15 @@ void Pizza_City::iterating_coverage() {
                                 possible_moves_distances[b];
                        });
 
-      Point move = possible_moves.back();
-      for (auto possible_move : possible_moves) {
-        if (!is_pizzeria_point_reachable_to_other_pizzeria(possible_move,
-                                                           i + 1)) {
-          move = possible_move;
-          break;
-        }
+      if (possible_moves.size() != 0 &&
+          currently_expanded_[i] < pizzeria_and_capacity.second) {
+        expand_by_point(possible_moves.back(), i + 1);
+        currently_expanded_[i]++;
+        busy_points_count++;
       }
-      city_field_[move.y()][move.x()] = i + 1;
-      busy_points_count++;
-
-      int top_increment = move.y() > pizzeria_and_capacity.first.y() ? 1 : 0;
-      int right_increment = move.x() > pizzeria_and_capacity.first.x() ? 1 : 0;
-      int left_increment = move.x() < pizzeria_and_capacity.first.x() ? 1 : 0;
-      int down_increment = move.y() < pizzeria_and_capacity.first.y() ? 1 : 0;
-
-      correct_expansions[i] = {
-          std::get<0>(correct_expansions[i]) + top_increment,
-          std::get<1>(correct_expansions[i]) + right_increment,
-          std::get<2>(correct_expansions[i]) + down_increment,
-          std::get<3>(correct_expansions[i]) + left_increment,
-      };
 
 #ifdef DEBUG_MODE
-      std::cout << "step " << filling_step << " pizzeria " << i + 1 << ": "
-                << std::endl;
-      for (auto permutation : correct_expansion) {
+      for (auto permutation : correct_expansions) {
         std::cout << std::get<0>(permutation) << " " << std::get<1>(permutation)
                   << " " << std::get<2>(permutation) << " "
                   << std::get<3>(permutation) << std::endl;
@@ -251,23 +308,14 @@ void Pizza_City::iterating_coverage() {
       std::cout << std::endl;
 #endif
     }
-#ifdef DEBUG_MODE
-    std::cout << "City: " << std::endl;
-    for (std::size_t y = field_height_ - 1; y >= 0 && y < field_height_; --y) {
-      for (std::size_t x = 0; x < field_width_; x++) {
-        std::cout << city_field_[y][x] << " ";
-      }
-      std::cout << std::endl;
-    }
-#endif
   }
 }
 
-std::vector<num_permutation_t> Pizza_City::get_correct_expansions() const {
+std::vector<num_expansion_t> Pizza_City::get_correct_expansions() const {
   return correct_expansions;
 }
 
-std::string handle_iterating_pizza_city(std::istream &input) {
+std::string handle_pizza_city(std::istream &input) {
   std::stringstream result;
   std::size_t n, m, k, counter = 1;
   while (1) {
@@ -319,6 +367,7 @@ Pizza_City::Pizza_City(std::size_t field_height, std::size_t field_width,
     }
   }
 
+  currently_expanded_ = std::vector<std::size_t>(pizza_data_.size(), 0);
   for (std::size_t i = 0; i < pizza_data_.size(); i++) {
     city_field_[pizza_data_[i].first.y()][pizza_data_[i].first.x()] = i + 1;
   }

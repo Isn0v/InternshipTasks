@@ -10,7 +10,7 @@ namespace Pizza {
 
 // 0 -> north, 1 -> east, 2 -> south, 3 -> west indexes for coverage
 typedef std::tuple<std::size_t, std::size_t, std::size_t, std::size_t>
-    num_permutation_t;
+    num_expansion_t;
 
 class Point {
  private:
@@ -44,21 +44,20 @@ class Pizza_City {
   std::size_t field_width_;
 
   std::vector<pizza_data_t> pizza_data_;
-  std::vector<num_permutation_t>
-      correct_expansions;  // pizzeria_id -> (up, right, down, left)
+  std::vector<num_expansion_t> correct_expansions;
+  std::vector<std::size_t> currently_expanded_;
 
   std::vector<Point> get_possible_expansion_moves(const Point &pizzeria) const;
   double get_distance_to_nearest_busy_point(Point current_point,
-                                            std::size_t pizzeria_id,
-                                            std::size_t filling_step);
-  bool is_pizzeria_point_reachable_to_other_pizzeria(
+                                            std::size_t pizzeria_id);
+  bool is_pizzeria_point_reachable_to_other_pizzerias(
       const Point &point, std::size_t pizzeria_id) const;
+  std::size_t expand_while_allowed(std::size_t pizzeria_id);
+  void expand_by_point(const Point &point, std::size_t pizzeria_id);
 
  public:
-  
   void iterating_coverage();
-  std::vector<num_permutation_t> get_correct_expansions() const;
-  
+  std::vector<num_expansion_t> get_correct_expansions() const;
 
   Pizza_City(std::size_t field_height, std::size_t field_width,
              const std::vector<pizza_data_t> &pizza_data);
@@ -66,6 +65,6 @@ class Pizza_City {
   ~Pizza_City();
 };
 
-std::string handle_iterating_pizza_city(std::istream &input);
+std::string handle_pizza_city(std::istream &input);
 
 }  // namespace Pizza
