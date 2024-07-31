@@ -27,18 +27,17 @@ std::ostream &operator<<(std::ostream &os, const Point &wall) {
   return os;
 }
 
-std::string handle_rgb_game(const std::string &input) {
-  std::istringstream ss(input);
+std::string handle_rgb_game(std::istream &input) {
   std::stringstream result;
 
   std::size_t n, counter = 1;
-  ss >> n;
+  input >> n;
   for (std::size_t i = 0; i < n; i++) {
     result << "Game " << counter++ << ":" << std::endl;
     char field[FIELD_HEIGHT][FIELD_WIDTH];
     for (std::size_t j = 0; j < FIELD_HEIGHT; j++) {
       for (std::size_t k = 0; k < FIELD_WIDTH; k++) {
-        ss >> field[j][k];
+        input >> field[j][k];
       }
     }
 

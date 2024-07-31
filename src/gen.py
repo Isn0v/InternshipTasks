@@ -117,10 +117,10 @@ def generate_pizza_test(height, width, pizzerias_counter):
 #         f.write(f"{a} {b} {c} {d}\n")
 #     f.write("\n")
 
-# for i in range(1, 10):
-#     with open(f"test/data/Railroads/expected_{i}.txt", "w") as f:
+# for i in range(1, 5):
+#     with open(f"test/data/RGBGame/expected_{i}.txt", "w") as f:
 #         pass
-#     with open(f"test/data/Railroads/input_{i}.txt", "w") as f:
+#     with open(f"test/data/RGBGame/input_{i}.txt", "w") as f:
 #         pass
 
 def count__reversed_inversions_naive(array):
@@ -145,13 +145,13 @@ def generate_railroads_test(coaches_count):
     return list(array_generated), answer
 
 
-if __name__ == "__main__":
-    n = 1000
-    arr, ans = generate_railroads_test(n)
-    with open(f"test/data/Railroads/input_9.txt", "w") as f:
-        f.write(f"{n}\n")
-        for i in arr:
-            f.write(f"{i}\n")
-        f.write("0\n0\n")
-    with open(f"test/data/Railroads/expected_9.txt", "w") as f:
-        f.write(f"\n{ans}\n\n")
+# if __name__ == "__main__":
+#     n = 1000
+#     arr, ans = generate_railroads_test(n)
+#     with open(f"test/data/Railroads/input_9.txt", "w") as f:
+#         f.write(f"{n}\n")
+#         for i in arr:
+#             f.write(f"{i}\n")
+#         f.write("0\n0\n")
+#     with open(f"test/data/Railroads/expected_9.txt", "w") as f:
+#         f.write(f"\n{ans}\n\n")

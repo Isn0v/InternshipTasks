@@ -1,0 +1,8 @@
+Game 1:
+Move 1 at (1, 1): removed 30 balls of color G, got 784 points
+Move 2 at (1, 1): removed 30 balls of color R, got 784 points
+Move 3 at (1, 1): removed 30 balls of color B, got 784 points
+Move 4 at (1, 1): removed 30 balls of color G, got 784 points
+Move 5 at (1, 1): removed 30 balls of color R, got 784 points
+Final score 4920 with 0 balls remaining
+

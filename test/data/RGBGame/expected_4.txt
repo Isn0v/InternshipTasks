@@ -1,0 +1,31 @@
+Game 1:
+Move 1 at (1, 1): removed 149 balls of color G, got 21609 points
+Final score 21609 with 1 balls remaining
+
+Game 2:
+Move 1 at (1, 1): removed 150 balls of color G, got 21904 points
+Final score 22904 with 0 balls remaining
+
+Game 3:
+Move 1 at (1, 1): removed 55 balls of color G, got 2809 points
+Move 2 at (1, 5): removed 55 balls of color G, got 2809 points
+Move 3 at (1, 1): removed 15 balls of color R, got 169 points
+Move 4 at (1, 2): removed 15 balls of color R, got 169 points
+Move 5 at (1, 1): removed 10 balls of color B, got 64 points
+Final score 7020 with 0 balls remaining
+
+Game 4:
+Move 1 at (1, 1): removed 35 balls of color G, got 1089 points
+Move 2 at (1, 1): removed 35 balls of color R, got 1089 points
+Move 3 at (1, 2): removed 35 balls of color R, got 1089 points
+Move 4 at (1, 2): removed 35 balls of color G, got 1089 points
+Move 5 at (1, 1): removed 10 balls of color B, got 64 points
+Final score 5420 with 0 balls remaining
+
+Game 5:
+Move 1 at (1, 9): removed 70 balls of color G, got 4624 points
+Move 2 at (1, 1): removed 32 balls of color R, got 900 points
+Move 3 at (3, 1): removed 28 balls of color G, got 676 points
+Move 4 at (1, 1): removed 20 balls of color B, got 324 points
+Final score 7524 with 0 balls remaining
+
