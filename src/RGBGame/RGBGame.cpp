@@ -55,12 +55,16 @@ std::string handle_rgb_game(std::istream &input) {
       }
     }
 
-    // Create a RGB_Game object and play it
-    RGB_Game game(field);
-    game.play();
+    try {
+      // Create a RGB_Game object and play it
+      RGB_Game game(field);
+      game.play();
 
-    // Append the log of the game to the result
-    result << game.dumps_log() << std::endl;
+      // Append the log of the game to the result
+      result << game.dumps_log() << std::endl;
+    } catch (const std::invalid_argument &e) {
+      result << "Invalid input: " << e.what() << std::endl;
+    }
   }
 
   // Return the result as a string
@@ -423,9 +427,6 @@ Point RGB_Game::choose_move() {
  *         character.
  */
 RGB_Game::RGB_Game(char (&field)[FIELD_HEIGHT][FIELD_WIDTH]) {
-  // Initialize the DSU object
-  field_dsu = DSU();
-
   // Iterate over each element in the field and populate the game field
   for (std::size_t i = 0; i < FIELD_HEIGHT; i++) {
     for (std::size_t j = 0; j < FIELD_WIDTH; j++) {
@@ -438,6 +439,8 @@ RGB_Game::RGB_Game(char (&field)[FIELD_HEIGHT][FIELD_WIDTH]) {
     }
   }
 
+  // Initialize the DSU object
+  field_dsu = DSU();
   // Perform the clustering operation on the game field
   clusterize_field();
 }
