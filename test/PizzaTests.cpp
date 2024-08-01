@@ -10,9 +10,8 @@
 
 
 class PizzaTest : public ::testing::TestWithParam<int> {};
-INSTANTIATE_TEST_SUITE_P(Pizza, PizzaTest, ::testing::Range(1, 9));
+INSTANTIATE_TEST_SUITE_P(Pizza, PizzaTest, ::testing::Range(1, 10));
 
-// TODO add more tests if needed
 TEST_P(PizzaTest, IntegrationTest) {
   int num_test = GetParam();
   std::stringstream ss_in, ss_exp;

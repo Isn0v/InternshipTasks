@@ -52,33 +52,34 @@ class Pizza_City {
   std::vector<std::size_t> currently_expanded_;
   std::vector<Point> find_empty_points();
 
-  std::vector<std::vector<bool>> fixed_expansions;
   std::vector<std::vector<bool>> untouchable_points;
-
 
   std::vector<Point> get_expansion_moves(const Point &pizzeria) const;
   std::vector<Point> get_potential_expansion_moves(const Point &pizzeria) const;
 
-  bool fix_expansion(std::size_t pizzeria_id);
+  bool fix_empty_point(const Point &point);
+
   bool point_inside_city(const Point &point) const;
   bool point_is_occupied(const Point &point) const;
+  bool point_is_untouchable(const Point &point) const;
+  bool is_pizzeria_filled(std::size_t pizzeria_id) const;
 
   double get_distance_to_nearest_busy_point(const Point &current_point,
                                             std::size_t pizzeria_id);
 
   bool is_pizzeria_point_reachable_to_other_pizzerias(
       const Point &point, std::size_t pizzeria_id) const;
+  bool is_point_reachable_to_pizzeria(const Point &point, std::size_t pizzeria_id) const;
 
   void expand_unreachable_points(std::size_t pizzeria_id);
-  void expand_pizzeria_with_no_choices(std::size_t pizzeria_id);
 
   void expand_by_point(const Point &point, std::size_t pizzeria_id);
   void reduce_by_point(const Point &point);
 
 
-  std::vector<Point> get_edge_expansion_points(std::size_t pizzeria_id);
+  std::vector<Point> get_edge_expansion_points(std::size_t pizzeria_id) const;
 
-  std::size_t get_pizzeria_id_by_point(const Point &point);
+  std::size_t get_pizzeria_id_by_point(const Point &point) const;
 
  public:
   void iterating_coverage();
