@@ -1,6 +1,6 @@
 #include "Pizza.hpp"
 
-#define DEBUG_MODE
+// #define DEBUG_MODE
 
 #include <algorithm>
 #include <cmath>
