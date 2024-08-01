@@ -94,21 +94,6 @@ bool is_match(char *pattern, size_t *pattern_shape, char *b, size_t *b_shape,
  * @throws std::invalid_argument If an unspecified value is found in the
  * pattern.
  */
-/**
- * Applies a pattern to a matrix and stores the result in another matrix.
- *
- * @param pattern Pointer to the pattern to be applied.
- * @param pattern_shape Pointer to the shape of the pattern.
- * @param b Pointer to the matrix where the pattern will be applied.
- * @param mask Pointer to the mask matrix.
- * @param b_shape Pointer to the shape of the matrix where the pattern will be
- * applied.
- * @param initial_x The initial x-coordinate where the pattern will be applied.
- * @param initial_y The initial y-coordinate where the pattern will be applied.
- *
- * @throws std::invalid_argument If an unspecified value is found in the
- * pattern.
- */
 void transform_by_pattern(char *pattern, size_t *pattern_shape, char *b,
                           bool *mask, size_t *b_shape, size_t initial_x,
                           size_t initial_y) {
