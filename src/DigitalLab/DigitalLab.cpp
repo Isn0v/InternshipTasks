@@ -32,21 +32,6 @@ T &get_value(T *array, size_t *shape, size_t x, size_t y) {
  *
  * @throws None
  */
-/**
- * Checks if a given pattern matches a submatrix of another matrix.
- *
- * @param pattern Pointer to the pattern to be matched.
- * @param pattern_shape Pointer to the shape of the pattern.
- * @param b Pointer to the matrix where the pattern will be matched.
- * @param b_shape Pointer to the shape of the matrix where the pattern will be
- * matched.
- * @param initial_x The initial x-coordinate where the pattern will be matched.
- * @param initial_y The initial y-coordinate where the pattern will be matched.
- *
- * @return True if the pattern matches the submatrix, false otherwise.
- *
- * @throws None
- */
 bool is_match(char *pattern, size_t *pattern_shape, char *b, size_t *b_shape,
               size_t initial_x, size_t initial_y) {
   // Check if the pattern fits within the matrix
