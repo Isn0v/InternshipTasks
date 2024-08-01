@@ -5,7 +5,11 @@
 #include <sstream>
 #include <string>
 
-// we throw an error if we have a pattern with unspecified values
+// NOTE: in task there wasn't specified the height and width of the matrix
+// so it is assumed that it doesn't contain more than 10^3 and 10^3
+// symbols in each side
+// ----------------------------------------------------------------------------
+// We throw an error if we have a pattern with unspecified values
 
 // Expected result:
 //                std::invalid_argument: Unspecified value in pattern (catched
@@ -29,7 +33,6 @@ TEST(DigitalLab, IntegrationTestWithIncorrectPattern) {
 
   EXPECT_EQ(Digital_Lab::handle_digital_lab(in), expected);
 }
-
 
 class DigitalLabTest : public ::testing::TestWithParam<int> {};
 INSTANTIATE_TEST_SUITE_P(DigitalLab, DigitalLabTest, ::testing::Range(1, 9));
